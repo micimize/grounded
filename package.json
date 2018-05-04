@@ -5,16 +5,16 @@
   "dependencies": {
     "@storybook/addon-options": "^3.4.3",
     "babel-polyfill": "^6.26.0",
-    "fela": "^6.1.7",
+    "io-ts": "^1.0.6",
     "js-joda": "^1.8.2",
     "moment": "^2.21.0",
     "react": "16.3.1",
     "react-art": "^16.3.2",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
     "react-dom": "^16.2.0",
-    "react-fela": "^7.2.0",
     "react-native": "0.55.3",
-    "react-native-web": "^0.6.1"
+    "react-native-web": "^0.6.1",
+    "styled-components": "^3.2.6"
   },
   "scripts": {
     "start": "react-scripts-ts-antd start",
