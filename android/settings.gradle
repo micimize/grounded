@@ -1,0 +1,3 @@
+rootProject.name = 'scheduled.life'
+
+include ':app'

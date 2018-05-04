@@ -1,0 +1,56 @@
+{
+  "name": "grounded",
+  "version": "0.1.0",
+  "description": "ground your ui",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "fela": "^6.1.7",
+    "js-joda": "^1.8.2",
+    "moment": "^2.21.0",
+    "react": "16.3.1",
+    "react-art": "^16.3.2",
+    "react-docgen-typescript-webpack-plugin": "^1.1.0",
+    "react-dom": "^16.2.0",
+    "react-fela": "^7.2.0",
+    "react-native": "0.55.3",
+    "react-native-web": "^0.6.1",
+    "webpack": "^4.6.0"
+  },
+  "scripts": {
+    "start": "react-scripts-ts-antd start",
+    "build": "react-scripts-ts-antd build",
+    "test": "react-scripts-ts-antd test --env=jsdom",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "^3.4.3",
+    "@storybook/addon-links": "^3.4.3",
+    "@storybook/addons": "^3.4.3",
+    "@storybook/react": "^3.4.3",
+    "@types/react": "^16.0.40",
+    "@types/react-dom": "^16.0.4",
+    "@types/react-hot-loader": "^3.0.6",
+    "@types/react-native": "^0.55.4",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-runtime": "^6.26.0",
+    "react-app-rewired": "^1.4.1",
+    "react-hot-loader": "^4.0.0",
+    "react-scripts": "^1.0.14",
+    "react-scripts-ts-antd": "^2.15.1",
+    "ts-import-plugin": "^1.4.4",
+    "ts-loader": "^4.0.1",
+    "ts-node": "^3.2.0",
+    "typescript": "2.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/micimize/grounded.git"
+  },
+  "license": "MIT",
+  "author": "Michael Joseph Rosenthal"
+}
