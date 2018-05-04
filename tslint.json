@@ -1,8 +1,5 @@
 {
   "extends": ["tslint-react"],
-  "exclude": [
-    "src/io-types"
-  ],
   "rules": {
       "semicolon": [false, "always"],
       "no-shadowed-variable": false,

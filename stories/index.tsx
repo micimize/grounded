@@ -1,6 +1,6 @@
 import React from 'react';
-import { storiesOf } from '@storybook/react-native';
+import { storiesOf } from '@storybook/react';
 
-import Welcome from './Welcome';
+import Welcome from './welcome';
 
 storiesOf('Welcome', module).add('to Storybook', () => <Welcome />);

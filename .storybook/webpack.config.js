@@ -9,10 +9,17 @@ module.exports = (storybookBaseConfig, configType) => {
     ...rule,
     test: /\.(tsx?|jsx?)$/,
     use: [
-      { loader, options: query },
+      //{ loader, options: query },
+      require.resolve('babel-loader'),
       require.resolve('ts-loader')
     ]
   }
+
+  storybookBaseConfig.resolve.alias = Object.assign(
+    storybookBaseConfig.resolve.alias || {}, {
+      'react-native': 'react-native-web',
+    }
+  )
 
   const DEV = configType === 'DEVELOPMENT';
 
@@ -24,7 +31,7 @@ module.exports = (storybookBaseConfig, configType) => {
     }
   });
 
-  storybookBaseConfig.plugins.push(new TSDocgenPlugin())
+  //storybookBaseConfig.plugins.push(new TSDocgenPlugin())
   storybookBaseConfig.resolve.extensions.push(".ts", ".tsx")
 
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ViewStyle } from 'react-native';
 
 /*
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 */
 
 type Props = {
-  showApp: () => void,
+  showApp?: () => void,
 };
 
 export default class Welcome extends React.Component<Props> {
@@ -16,7 +16,7 @@ export default class Welcome extends React.Component<Props> {
     wrapper: {
       flex: 1,
       padding: 24,
-      justifyContent: 'center',
+      justifyContent: 'center' as 'center',
     },
     header: {
       fontSize: 18,
@@ -29,9 +29,11 @@ export default class Welcome extends React.Component<Props> {
     },
   };
 
-  showApp(event) {
+  showApp(event: Event) {
     event.preventDefault();
-    if (this.props.showApp) this.props.showApp();
+    if (this.props.showApp) {
+this.props.showApp();
+    } 
   }
 
   render() {
