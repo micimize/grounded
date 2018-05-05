@@ -5,7 +5,6 @@
   "dependencies": {
     "@storybook/addon-options": "^3.4.3",
     "babel-polyfill": "^6.26.0",
-    "io-ts": "^1.0.6",
     "js-joda": "^1.8.2",
     "moment": "^2.21.0",
     "react": "16.3.1",

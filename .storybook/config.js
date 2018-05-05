@@ -16,7 +16,7 @@ setOptions({
 
 function loadStories() {
   // put welcome screen at the top of the list so it's the first one displayed
-  require('../stories')
+  require('../src/storybook')
 
   // automatically import all story js files that end with *.stories.js
   // const req = require.context('../stories', true, /\.stories\.tsx?$/);

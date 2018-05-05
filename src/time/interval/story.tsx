@@ -1,17 +1,18 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-
-import TimeRange, { Type } from '../src/time/time-range' 
+import TimeInterval from './interval' 
+import { LocalTime } from 'js-joda'
 
 type Props = {
   showApp?: () => void
 }
 
-const sampleRange = Type
-  .decode({ start: '07:00', end: '12:00' }) // careful, joda is super strict about leading 0s
-  .getOrElseL(e => { throw Error('invalid sample range. careful, joda is super strict about leading 0s') })
+const sampleInterval: TimeInterval = {
+  start: LocalTime.parse('07:00'),
+  end: LocalTime.parse('10:00'),
+}
 
-export default class TimeRangeStory extends React.Component<Props> {
+export default class TimeIntervalStory extends React.Component<Props> {
   styles = {
     wrapper: {
       flex: 1,
@@ -40,7 +41,7 @@ this.props.showApp();
     return (
       <View style={this.styles.wrapper}>
         <Text style={this.styles.header}>hacking together some sample stuff</Text>
-        <TimeRange {...sampleRange} />
+        <TimeInterval {...sampleInterval} />
       </View>
     );
   }
