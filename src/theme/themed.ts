@@ -2,12 +2,13 @@ import React from 'react';
 import styled from 'styled-components/native'
 import defaultTheme from './default-theme'
 import * as Color from './color/types'
+import * as Size from './size/types'
 
 import withDefaultProps from './with-default-props'
 
-type Theme = typeof defaultTheme
+type Theme = Color.Theme & Size.Theme
 
-type Themed<Props> = Props & { theme: Theme } & Color.Props
+type Themed<Props> = Props & { theme: Theme } & Color.Props & Size.Props
 
 const defaultThemeProps = { theme: defaultTheme }
 
