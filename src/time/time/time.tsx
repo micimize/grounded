@@ -1,21 +1,26 @@
 import React from 'react';
 import styled from 'styled-components/native'
-import { LocalTime } from 'js-joda'
-import * as select from '../../theme/selectors'
-import withTheme from '../../theme/with-theme'
+import { LocalTime, DateTimeFormatter } from 'js-joda'
+import * as select from '../../theme/color/selectors'
+import * as themed from '../../theme/themed'
+import withDefaultProps from '../../theme/with-default-props'
 
 type Time = LocalTime
 
-/*
-  <Text primary|secondary|accent|success...
-        backed? />
-*/
 const Text = styled.Text`
   color: ${select.color}
+  background: ${select.background}
 `
 
-const Time = withTheme<{ time: Time }>(
-  ({ time, ...props }) => <Text {...props}>{time.toString()}</Text>
+type Props = themed.Props<{ time: Time, format: string }>
+
+const Time = withDefaultProps<Props>(
+  themed.defaultProps({ format: 'h:mm' }),
+  ({ time, format, ...props }) => (
+    <Text {...props}>
+      {time.format(DateTimeFormatter.ofPattern(format))}
+    </Text>
+  )
 )
 
 export default Time

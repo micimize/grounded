@@ -1,4 +1,4 @@
-type Omit<T, K extends keyof T> = Pick<T, Diff<keyof T, K>>
+type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
 
 type Diff<T, U> = T extends U ? never : T
 
