@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import Button from './button' 
-import { LocalTime } from 'js-joda'
 
 import theme from '../theme/default-theme'
 
@@ -9,12 +8,10 @@ type Props = {
   showApp?: () => void
 }
 
-const sampleTime = LocalTime.parse('07:00')
-
 const SizeButton = ({ size }) =>
   <Button size={size} content background theme={theme}>{size}</Button>
 
-export default class TimeStory extends React.Component<Props> {
+export default class ButtonStory extends React.Component<Props> {
   styles = {
     wrapper: {
       flex: 1,

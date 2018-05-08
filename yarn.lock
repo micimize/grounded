@@ -9033,6 +9033,13 @@ react-native-menu@^0.23.0:
     prop-types "^15.5.10"
     react-timer-mixin "^0.13.3"
 
+react-native-ratings@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-ratings/-/react-native-ratings-5.3.0.tgz#f496ac6ebe934e29d7e2cfe8359b6a812ec95599"
+  dependencies:
+    lodash "^4.17.4"
+    prop-types "^15.5.10"
+
 react-native-really-awesome-button@^0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-native-really-awesome-button/-/react-native-really-awesome-button-0.8.3.tgz#81b9f19775d0f094467550ec4584762f1fbdd841"
