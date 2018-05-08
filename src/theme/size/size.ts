@@ -5,7 +5,7 @@ const TEXT_RATIO = 0.07142857
 
 const shortHands: ShortHands = {
   // short hand prop names
-  mini: -2,
+  mini: -3,
   tiny: -2,
   small: -1,
   medium: 0,

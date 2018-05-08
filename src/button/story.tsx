@@ -11,6 +11,9 @@ type Props = {
 
 const sampleTime = LocalTime.parse('07:00')
 
+const SizeButton = ({ size }) =>
+  <Button size={size} content background theme={theme}>{size}</Button>
+
 export default class TimeStory extends React.Component<Props> {
   styles = {
     wrapper: {
@@ -42,10 +45,18 @@ this.props.showApp();
         <Text style={this.styles.header}>hacking together some sample stuff</Text>
         <Button color="background" background="secondary" theme={theme}>Text</Button>
         <Button primary background theme={theme}/>
-        <Button size="small" color="background" background="secondary" theme={theme}>Text</Button>
-        <Button size="massive" primary background theme={theme}>
-          Text Text Text
+        <Button size="massive" color="background" background="info" theme={theme}>
+          So many options!
         </Button>
+        <Text style={{marginTop: 10, marginBottom: 5 }}> Sizes: </Text>
+        <SizeButton size="mini"/>
+        <SizeButton size="tiny"/>
+        <SizeButton size="small"/>
+        <SizeButton size="medium"/>
+        <SizeButton size="large"/>
+        <SizeButton size="big"/>
+        <SizeButton size="huge"/>
+        <SizeButton size="massive"/>
       </View>
     );
   }
