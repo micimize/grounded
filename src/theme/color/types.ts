@@ -12,7 +12,8 @@ type ColorProps = Diff<
 >
 
 type Props = Partial<Record<ColorProps, true>> & {
-  background?: boolean | ColorProps
+  background?: boolean | ColorProps | 'background'
+  color?: ColorProps | 'background'
 }
 
 type Theme = { colors: Colors }

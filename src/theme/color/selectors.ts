@@ -2,30 +2,37 @@ import { Theme, Props } from './types'
 
 type CProps = object & { theme: Theme } & Props
 
-export const color = (props: CProps) => {
+export const color = ({ color, theme, ...props }: CProps) => {
   // todo maybe faster with a hashmap later
   for (let kind of ['feedback', 'branding', 'content', 'background']) {
-    if (kind in props) {
+    if (kind in props || color === kind) {
       // return defaults
-      let value = props.theme.colors[kind].default
+      let k = theme.colors[kind]
+      let value = k && k.default
       if (value) {
         return value
       }
     }
-    for (let selector in props.theme.colors[kind] || {}) {
+    if (color) {
+      let value = theme.colors[kind][color]
+      if (value) {
+        return value
+      }
+    }
+    for (let selector in theme.colors[kind] || {}) {
       if (selector in props) {
-        let value = props.theme.colors[kind][selector]
+        let value = theme.colors[kind][selector]
         if (value) {
           return value
         }
       }
     }
   }
-  return props.theme.colors.content.default
+  return theme.colors.content.default
 }
 
-export const background = ({ background = false, theme }: CProps) => {
-  if (background === true) {
+export const background = ({ background, theme }: CProps) => {
+  if (background === true || background === 'background') {
     // background has been explicitly set to true
     return theme.colors.background.default
   }

@@ -10,13 +10,12 @@ type ShortHands = Record<ShortHandProp, ValidSizes>
 
 type Sizing = {
   default: 0
-  getSize: (size: ValidSizes | ShortHandProp, unit?: ValidUnits) => string
+  ratio: number,
+  getSize: (size: ValidSizes | ShortHandProp, unit?: ValidUnits, base?: number) => number | string
 } & ShortHands
-
-type Size = { text: Sizing }
 
 type Props = { size?: ValidSizes | ShortHandProp }
 
-type Theme = { size: { text: Sizing } }
+type Theme = { size: { text: Sizing, button: Sizing } }
 
 export { Props, Theme, ShortHands }
