@@ -1,10 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import Rating from './rating' 
-
 import theme from '../theme/default-theme'
-
-import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 // Generate required css
 const iconFont = require('react-native-vector-icons/Fonts/FontAwesome.ttf')
@@ -58,12 +54,6 @@ this.props.showApp();
     return (
       <View style={this.styles.wrapper}>
         <Text style={this.styles.header}>hacking together some sample stuff</Text>
-        <Rating
-        filledStyle={{ color: 'blue' }}
-        unfilledStyle={{ color: 'grey' }}
-        onChange={console.log}
-        precision={0.5} count={5} ratingWidth={60} ratingComponent={
-          ({ style }) => <Icon selectable={false} name="rocket" size={style.width} style={style} />}/>
       </View>
     );
   }

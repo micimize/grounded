@@ -22,7 +22,7 @@ const Button = styled(AwesomeButton).attrs({
   textColor: select.text.color,
   textSize: select.text.size,
   width: size(100),
-  height: size(50),
+  height: size(50)
 })`
 `
 /*
