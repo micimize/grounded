@@ -18,10 +18,23 @@ const size = (base = 100) => ({ theme, size = 0 }: Props) => {
 const Rating = styled(_Rating).attrs({
 })`
 `
-
 type Props = themed.Props<{}>
 
 export default withDefaultProps<Props>(
   themed.defaultProps({}),
   Rating as any
 ) as any
+
+/*
+<VictoryChart animate={{ duration: 2000, easing: "bounce" }}>
+<VictoryScatter animate={{ duration: 2000, easing: "bounce" }}
+  style={{ data: { fill: "#c43a31" } }}
+  data={[
+    { x: 0, y: 0, size: 25, symbol: "star" },
+    { x: 1, y: 0, size: 25, symbol: "star" },
+    { x: 2, y: 0, symbol: "star" },
+    { x: 3, y: 0, symbol: "star" },
+    { x: 4, y: 0, symbol: "star" },
+  ]}
+/>
+*/

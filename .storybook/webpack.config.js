@@ -14,24 +14,26 @@ module.exports = (storybookBaseConfig, configType) => {
   const include = [
     path.resolve('./src'),
     path.resolve('./.storybook'),
-    nodeModule('react-native-really-awesome-button') 
+    nodeModule('react-native-really-awesome-button'),
+    nodeModule('react-native-vector-icons'),
+    nodeModule('react-native-ratings')
   ]
-
-  console.log(include)
   // ts load everythin
   storybookBaseConfig.module.rules[0] = {
     ...rule,
     include,
     test: /\.(tsx?|jsx?)$/,
     use: [
-      //{ loader, options: query },
+      // { loader, options: query },
       require.resolve('babel-loader'),
       require.resolve('ts-loader')
+
     ]
   }
-
+  storybookBaseConfig.resolve.symlinks = false
   storybookBaseConfig.resolve.alias = Object.assign(
     storybookBaseConfig.resolve.alias || {}, {
+      // 'victory-native': 'victory',
       'react-native': 'react-native-web',
     }
   )
@@ -39,12 +41,13 @@ module.exports = (storybookBaseConfig, configType) => {
   const DEV = configType === 'DEVELOPMENT';
 
   storybookBaseConfig.module.rules.push({
-    test: /\.(gif|jpe?g|png|svg)$/,
+    test: /\.(gif|jpe?g|png|svg|ttf)$/,
+    include,
     use: {
       loader: 'url-loader',
       options: { name: '[name].[ext]' }
     }
-  });
+  })
 
   //storybookBaseConfig.plugins.push(new TSDocgenPlugin())
   storybookBaseConfig.resolve.extensions.push(".ts", ".tsx")

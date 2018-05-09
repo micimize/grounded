@@ -4,6 +4,27 @@ import Rating from './rating'
 
 import theme from '../theme/default-theme'
 
+import Icon from 'react-native-vector-icons/dist/SimpleLineIcons';
+
+// Generate required css
+const iconFont = require('react-native-vector-icons/Fonts/SimpleLineIcons.ttf')
+const iconFontStyles = `@font-face {
+  src: url(${iconFont});
+  font-family: simple-line-icons;
+}`;
+
+// Create stylesheet
+const style = document.createElement('style');
+style.type = 'text/css';
+if ('styleSheet' in style) {
+  (style as any).styleSheet.cssText = iconFontStyles;
+} else {
+  style.appendChild(document.createTextNode(iconFontStyles));
+}
+
+// Inject stylesheet
+document.head.appendChild(style);
+
 type Props = {
   showApp?: () => void
 }
@@ -37,7 +58,9 @@ this.props.showApp();
     return (
       <View style={this.styles.wrapper}>
         <Text style={this.styles.header}>hacking together some sample stuff</Text>
-        <Rating/>
+        <Rating fractions={1}/>
+        <Rating fractions={1} ratingIcon={
+          ({ style: { width, color } }) => <Icon selectable={false} name="rocket" size={width} color={color} />}/>
       </View>
     );
   }
