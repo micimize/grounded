@@ -1,7 +1,7 @@
 import React from 'react'
 import * as R from 'ramda'
 import Color from 'color'
-import { Rating as _Rating } from 'react-native-ratings'
+import _Rating from './rating-impl'
 import styled from 'styled-components/native'
 import * as select from '../theme/select'
 import * as themed from '../theme/themed'
@@ -19,11 +19,13 @@ const Rating = styled(_Rating).attrs({
 })`
 `
 type Props = themed.Props<{}>
+export default _Rating
 
+/*
 export default withDefaultProps<Props>(
   themed.defaultProps({}),
   Rating as any
-) as any
+)
 
 /*
 <VictoryChart animate={{ duration: 2000, easing: "bounce" }}>

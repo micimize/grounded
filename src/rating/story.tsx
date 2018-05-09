@@ -4,13 +4,13 @@ import Rating from './rating'
 
 import theme from '../theme/default-theme'
 
-import Icon from 'react-native-vector-icons/dist/SimpleLineIcons';
+import Icon from 'react-native-vector-icons/dist/FontAwesome';
 
 // Generate required css
-const iconFont = require('react-native-vector-icons/Fonts/SimpleLineIcons.ttf')
+const iconFont = require('react-native-vector-icons/Fonts/FontAwesome.ttf')
 const iconFontStyles = `@font-face {
   src: url(${iconFont});
-  font-family: simple-line-icons;
+  font-family: FontAwesome;
 }`;
 
 // Create stylesheet
@@ -58,9 +58,12 @@ this.props.showApp();
     return (
       <View style={this.styles.wrapper}>
         <Text style={this.styles.header}>hacking together some sample stuff</Text>
-        <Rating fractions={1}/>
-        <Rating fractions={1} ratingIcon={
-          ({ style: { width, color } }) => <Icon selectable={false} name="rocket" size={width} color={color} />}/>
+        <Rating
+        filledStyle={{ color: 'blue' }}
+        unfilledStyle={{ color: 'grey' }}
+        onChange={(n: number) => { /* */ }}
+        fractions={1} count={5} ratingWidth={60} ratingComponent={
+          ({ style }) => <Icon selectable={false} name="rocket" size={style.width} style={style} />}/>
       </View>
     );
   }
