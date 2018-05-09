@@ -62,7 +62,7 @@ this.props.showApp();
         filledStyle={{ color: 'blue' }}
         unfilledStyle={{ color: 'grey' }}
         onChange={(n: number) => { /* */ }}
-        fractions={1} count={5} ratingWidth={60} ratingComponent={
+        precision={0.5} count={5} ratingWidth={60} ratingComponent={
           ({ style }) => <Icon selectable={false} name="rocket" size={style.width} style={style} />}/>
       </View>
     );

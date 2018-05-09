@@ -4,17 +4,9 @@ import React, { Component } from 'react';
 import styled from 'styled-components/native'
 import * as R from 'ramda'
 
-import {
-  View, Text,
-  PanResponder, PanResponderInstance,
-  Animated, UIManager, findNodeHandle,
-  Platform, TextStyle, ViewStyle
-} from 'react-native';
+import { View, Text, Animated, TextStyle, ViewStyle } from 'react-native';
 
-const Wrapper = styled.View`
-  flex-direction: row;
-  flex-wrap: nowrap;
-`
+import PanHandler from './pan-handler'
 
 const Inner = styled.View`
   position: absolute;
@@ -26,6 +18,12 @@ const Inner = styled.View`
 function times<T>(num: number, fn: (num: number) => T): Array<T> {
   let unfold = n => n >= num ? false : [fn(n), n + 1]
   return R.unfold(unfold, 0)
+}
+
+function positionAt(x: number) {
+  const newPosition = new Animated.ValueXY();
+  newPosition.setValue({ x, y: 0 });
+  return newPosition
 }
 
 type RatingStyle = Pick<TextStyle, 'color'> &
@@ -41,82 +39,60 @@ type Props = {
   style?: ViewStyle,
   readonly?: boolean,
   startingValue?: number
-  fractions?: number,
+  precision?: number,
 }
 
 type State = {
   pageX: number,
   position: Animated.ValueXY,
-  panResponder: PanResponderInstance
   value: number
+}
+
+function round(source: number, precision?: number) {
+  // 0 precision is invalid anyways
+  return precision ?
+    Math.round(source / precision) * precision :
+    source
+}
+
+let startingValue = ({ startingValue, count, precision }: Props) => {
+  let value = startingValue !== undefined ? startingValue : (count / 2)
+  return round(value, precision)
 }
 
 export default class Rating extends Component<Props, State> {
 
-  panHandlerRef: typeof Wrapper
+  pan = (locationX: number) => {
+    let value = this.valueOf(locationX)
+    this.setState({ value, position: positionAt(value) })
+  }
 
-  valueOf(event: any) {
+  onRelease = (locationX: number) => {
+    const rating = this.getCurrentRating();
+    this.setCurrentRating(rating)
+    this.props.onChange(rating);
+  }
+
+  valueOf = (locationX: number) => {
     let { ratingWidth, count } = this.props
-    return (
-      event.nativeEvent.pageX - this.state.pageX
-    ) - (ratingWidth * count / 2)
+    return locationX - (ratingWidth * count / 2)
   }
 
   constructor(props: Props) {
     super(props);
-    const { onChange, fractions } = this.props;
-    const position = new Animated.ValueXY();
-
-    const panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onPanResponderGrant: (event, gesture) => {
-        const newPosition = new Animated.ValueXY();
-        let x = this.valueOf(event)
-        newPosition.setValue({ x, y: 0 });
-        this.setState({
-          position: newPosition,
-          value: x
-        });
-      },
-      onPanResponderMove: (event, gesture) => {
-        const newPosition = new Animated.ValueXY();
-        let x = this.valueOf(event)
-        newPosition.setValue({ x, y: 0 });
-        this.setState({
-          position: newPosition,
-          value: x
-        });
-      },
-      onPanResponderRelease: event => {
-        const rating = this.getCurrentRating();
-        if (!fractions) {
-          // "round up" to the nearest rating image
-          this.setCurrentRating(rating);
-        }
-        onChange(rating);
-      },
-    });
-
-    let fallback = this.props.count / 2
-    if (!this.props.fractions) {
-      fallback = Math.ceil(fallback)
-    }
+    let value = startingValue(this.props)
     this.state = {
-      panResponder,
-      value: this.props.startingValue || fallback,
+      value,
       pageX: 0,
-      position
+      position: positionAt(value)
     };
   }
 
   componentDidMount() {
-    let fallback = this.props.count / 2
-    if (!this.props.fractions) {
-      fallback = Math.ceil(fallback)
-    }
-    this.setCurrentRating(this.props.startingValue || fallback);
+    this.setCurrentRating(this.state.value)
   }
 
+  // this seems rather silly because everything's based on pageX now
   interpolatedPositionInto = (outputRange: [number, number, number]) => {
     const { position } = this.state;
     const { ratingWidth, count } = this.props;
@@ -172,26 +148,14 @@ export default class Rating extends Component<Props, State> {
 
   getCurrentRating = () => {
     const { value } = this.state;
-    const { fractions, ratingWidth, count } = this.props;
-    const startingValue = count / 2;
-    let currentRating = 0;
-
-    if (value > count * ratingWidth / 2) {
-      currentRating = count;
-    } else if (value < -count * ratingWidth / 2) {
-      currentRating = 0;
-    } else if (value < ratingWidth || value > ratingWidth) {
-      currentRating = startingValue + value / ratingWidth;
-      currentRating = !fractions ?
-        Math.ceil(currentRating) :
-        +currentRating.toFixed(fractions);
-    } else {
-      currentRating = !fractions ?
-        Math.ceil(startingValue) :
-        +startingValue.toFixed(fractions);
-    }
-
-    return currentRating;
+    const { precision, ratingWidth, count } = this.props;
+    let currentRating =
+      (value > count * ratingWidth / 2) ? count
+      : (value < -count * ratingWidth / 2) ? 0
+      : (value < ratingWidth || value > ratingWidth) ?
+        startingValue(this.props) + value / ratingWidth
+      : startingValue(this.props)
+    return round(currentRating, precision)
   }
 
   setCurrentRating = (rating: number) => {
@@ -209,13 +173,8 @@ export default class Rating extends Component<Props, State> {
     } else if (rating < count / 2 || rating > count / 2) {
       value = (rating - initialRating) * ratingWidth;
     }
-    const newPosition = new Animated.ValueXY();
-    newPosition.setValue({
-      x: value,
-      y: 0
-    });
     this.setState({
-      position: newPosition,
+      position: positionAt(value),
       value
     });
   }
@@ -244,19 +203,7 @@ export default class Rating extends Component<Props, State> {
     return (
       <View pointerEvents={readonly ? 'none' : 'auto'}
         style={[{ width: count * ratingWidth }, style]}>
-        <Wrapper innerRef={panHandler => this.panHandlerRef = panHandler}
-          onLayout={() => {
-            let handle = findNodeHandle(this.panHandlerRef)
-            if (handle) {
-              UIManager.measure(
-                handle,
-                (x, y, width, height, pageX, pageY) => {
-                  this.setState({ pageX })
-                })
-            }
-          }}
-          {...this.state.panResponder.panHandlers}
-        >
+        <PanHandler onGrant={this.pan} onMove={this.pan} onRelease={this.onRelease}>
           <Inner>
             <Animated.View style={this.getPrimaryViewStyle()}>
               {...units(filledStyle)}
@@ -265,7 +212,7 @@ export default class Rating extends Component<Props, State> {
               {...units(unfilledStyle)}
             </Animated.View>
           </Inner>
-        </Wrapper>
+        </PanHandler>
       </View >
     );
   }
