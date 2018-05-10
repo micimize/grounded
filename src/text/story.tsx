@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import theme from '../theme/default-theme'
+import Text, { Input } from './plain-text'
 
 // Generate required css
 const iconFont = require('react-native-vector-icons/Fonts/FontAwesome.ttf')
@@ -25,6 +26,15 @@ type Props = {
   showApp?: () => void
 }
 
+class SampleInput extends React.Component<any, { value: string }> {
+  state = { value: '' }
+  render() {
+    return (
+      <Input {...this.props} onChange={value => this.setState({ value })}>{this.state.value}</Input>
+    );
+  }
+}
+
 export default class RatingStory extends React.Component<Props> {
   styles = {
     wrapper: {
@@ -46,7 +56,7 @@ export default class RatingStory extends React.Component<Props> {
   showApp(event: Event) {
     event.preventDefault();
     if (this.props.showApp) {
-this.props.showApp();
+      this.props.showApp();
     } 
   }
 
@@ -54,6 +64,11 @@ this.props.showApp();
     return (
       <View style={this.styles.wrapper}>
         <Text style={this.styles.header}>hacking together some sample stuff</Text>
+        <Text secondary theme={theme}>
+          Cool text bro
+        </Text>
+        <Text size="massive" primary background theme={theme}>So big</Text>
+        <Input size="massive" primary background theme={theme} placeholder="big editable" />
       </View>
     );
   }

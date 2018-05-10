@@ -58,12 +58,16 @@ this.props.showApp();
     return (
       <View style={this.styles.wrapper}>
         <Text style={this.styles.header}>hacking together some sample stuff</Text>
+        <Rating theme={theme} />
         <Rating
-        filledStyle={{ color: 'blue' }}
-        unfilledStyle={{ color: 'grey' }}
-        onChange={console.log}
-        precision={0.5} count={5} ratingWidth={60} ratingComponent={
-          ({ style }) => <Icon selectable={false} name="rocket" size={style.width} style={style} />}/>
+          theme={theme}
+          primary
+          background="muted"
+          onChange={console.log}
+          precision={0.5} count={5} ratingWidth={60} ratingComponent={
+          ({ style }) => <View>
+            <Icon selectable={false} name="rocket" size={style.width} style={style} />
+            </View>}/>
       </View>
     );
   }

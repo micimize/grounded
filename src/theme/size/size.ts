@@ -1,7 +1,7 @@
 import { Theme, ShortHands } from './types'
 // derived from semantic ui button ratio
 // https://semantic-ui.com/elements/button.html#size
-const TEXT_RATIO = 0.07142857 
+const TEXT_RATIO = 30 * 0.07142857 
 
 const shortHands: ShortHands = {
   // short hand prop names
@@ -31,7 +31,7 @@ const size: Theme['size'] = {
   text: {
     default: 0, // index of size array
     ratio: TEXT_RATIO,
-    getSize: sizer((base, mod) => base + TEXT_RATIO * mod, 1, 'em'),
+    getSize: sizer((base, mod) => base + TEXT_RATIO * mod, 14, undefined),
     ...shortHands
   },
   button: {

@@ -15,17 +15,24 @@ const branding = {
   accent: palette.yellow,
 }
 
+// bootstrap feedback colors
 const feedback = {
-  success: palette.green,
-  danger: palette.red,
-  warning: palette.orange,
-  info: palette.blue
+  success: '#28a745', 
+  danger: '#dc3545',  
+  warning: '#ffc107', 
+  info: '#17a2b8',   
 }
 
 export const dark = {
   branding,
   feedback,
-  embellishments: [ palette.magenta ],
+  embellishments: [
+    // unused palette colors can become embellishments
+    palette.blue,
+    palette.orange,
+    palette.green,
+    palette.red,
+  ],
   content: {
     emphasis: '#93a1a1',  // base1
     default: '#839496',   // base0

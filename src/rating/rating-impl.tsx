@@ -1,19 +1,11 @@
 // heavily modified version of
 // https://github.com/Monte9/react-native-ratings/blob/master/src/rating.js
 import React, { Component } from 'react';
-import styled from 'styled-components/native'
 import * as R from 'ramda'
 
 import { View, Text, Animated, TextStyle, ViewStyle } from 'react-native';
 
 import PanHandler from './pan-handler'
-
-const Inner = styled.View`
-  position: absolute;
-  flex-direction: row;
-  top: 0;
-  left: 0;
-`
 
 function times<T>(num: number, fn: (num: number) => T): Array<T> {
   let unfold = n => n >= num ? false : [fn(n), n + 1]
@@ -29,17 +21,21 @@ function positionAt(x: number) {
 type RatingStyle = Pick<TextStyle, 'color'> &
   Partial<Pick<TextStyle, 'backgroundColor' | 'opacity' | 'textDecorationColor'>>
 
-type Props = {
-  ratingComponent: any,
-  count: number,
-  ratingWidth: number,
-  filledStyle: RatingStyle,
-  unfilledStyle: RatingStyle,
-  onChange: (rating: number) => any,
-  style?: ViewStyle,
-  readonly?: boolean,
-  startingValue?: number
-  precision?: number,
+namespace Rating {
+  export type Props = {
+    ratingComponent: any,
+    count: number,
+    ratingWidth: number,
+    styles?: {
+      filled: RatingStyle,
+      unfilled: RatingStyle,
+    }
+    onChange?: (rating: number) => any,
+    style?: ViewStyle,
+    readonly?: boolean,
+    startingValue?: number
+    precision?: number,
+  }
 }
 
 type State = {
@@ -55,12 +51,12 @@ function round(source: number, precision?: number) {
     source
 }
 
-let startingValue = ({ startingValue, count, precision }: Props) => {
+let startingValue = ({ startingValue, count, precision }: Rating.Props) => {
   let value = startingValue !== undefined ? startingValue : (count / 2)
   return round(value, precision)
 }
 
-export default class Rating extends Component<Props, State> {
+class Rating extends Component<Rating.Props, State> {
 
   pan = (locationX: number) => {
     let value = this.valueOf(locationX)
@@ -70,7 +66,9 @@ export default class Rating extends Component<Props, State> {
   onRelease = (locationX: number) => {
     const rating = this.getCurrentRating();
     this.setCurrentRating(rating)
-    this.props.onChange(rating);
+    if (this.props.onChange) {
+      this.props.onChange(rating);
+    }
   }
 
   valueOf = (locationX: number) => {
@@ -78,7 +76,7 @@ export default class Rating extends Component<Props, State> {
     return locationX - (ratingWidth * count / 2)
   }
 
-  constructor(props: Props) {
+  constructor(props: Rating.Props) {
     super(props);
     let value = startingValue(this.props)
     this.state = {
@@ -184,8 +182,10 @@ export default class Rating extends Component<Props, State> {
       readonly,
       count,
       ratingWidth,
-      filledStyle,
-      unfilledStyle,
+      styles: {
+        filled = {},
+        unfilled = {}
+      } = {},
       style,
       ratingComponent: Unit
     } = this.props;
@@ -204,16 +204,17 @@ export default class Rating extends Component<Props, State> {
       <View pointerEvents={readonly ? 'none' : 'auto'}
         style={[{ width: count * ratingWidth }, style]}>
         <PanHandler onGrant={this.pan} onMove={this.pan} onRelease={this.onRelease}>
-          <Inner>
+          <View style={{ flexDirection: 'row' }}>
             <Animated.View style={this.getPrimaryViewStyle()}>
-              {...units(filledStyle)}
+              {...units(filled)}
             </Animated.View>
             <Animated.View style={this.getSecondaryViewStyle()}>
-              {...units(unfilledStyle)}
+              {...units(unfilled)}
             </Animated.View>
-          </Inner>
+          </View>
         </PanHandler>
       </View >
     );
   }
 }
+export default Rating
