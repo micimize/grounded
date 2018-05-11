@@ -20,28 +20,35 @@ const editing = (left, middle, right) => props =>
 
 const editingColors = (left, right) => props => props.editing === true ?
   props.theme.colors[right[0]][right[1]] :
-  props.editing ? props.theme.colors[left[0]][left[1]] :
-  'transparent'
+  props.theme.colors[left[0]][left[1]] 
 
 const Wrapper = styled(Animatable.View).attrs<{ editing?: 'invite' | boolean, multiline: boolean } & ViewProps>({
-  transition: [ 'borderBottomColor', 'borderLeftColor' ] as any
+  useNativeDriver: true,
+  transition: [
+    'paddingBottom', 'borderBottomColor', 'borderBottomWidth',
+    'paddingLeft', 'borderLeftColor', 'borderLeftWidth'
+  ] as any
 })`
+  margin-bottom: 12px
+  flex-direction: row
+  align-items: ${props => props.multiline ? 'flex-start' : 'center'}
   border-style: dashed
+  padding-bottom: ${editing(4, 2, 1)}
   border-bottom-width: ${editing(0, 2, 3)}
   border-bottom-color: ${editingColors(['content', 'muted'], ['feedback', 'info'])}
   ${props => props.multiline ? css`
-    padding-left: ${editing(3, 1, 0)}
+    padding-left: ${editing(4, 2, 1)}
     border-left-width: ${editing(0, 2, 3)(props)}
     border-left-color: ${editingColors(['content', 'muted'], ['feedback', 'info'])(props)}
   ` : css`
-    padding-left: 3
+    padding-left: 4
   `}
 `
 
 const EditIcon = themed<IconProps>(styled(Icon)`
   color: ${select.text.color}
   font-size: ${select.text.size}
-  font-size: ${R.pipe(select.text.size, (s = 12) => s * 0.75)}
+  font-size: 15
 ` as any)
 
 const PlainText = styled.Text`
@@ -58,6 +65,7 @@ type Editable<Props, Edit extends keyof Props> = Props & {
 type IP = Editable<TextInputProps, 'onChangeText'>
 
 const TextInput = styled.TextInput`
+  flex: 1
   color: ${select.text.color}
   background: ${select.text.background}
   font-size: ${select.text.size}
@@ -94,12 +102,14 @@ class EditablePlainText extends React.Component<IP, { editStyle: 'invite' | true
   render() {
     let { onEdit, onFocus, onBlur, editing, value, numberOfLines, multiline, ...props } = this.props
     let inputProps = this.inputProps()
+    let multi = inputProps.multiline
     return (
-      <Wrapper editing={onEdit === undefined ? false : this.state.editStyle} multiline={inputProps.multiline}>
+      <Wrapper editing={onEdit === undefined ? false : this.state.editStyle} multiline={multi}>
         {onEdit ?
           <Input onEdit={onEdit} {...this.inputProps()} {...props} /> :
             <PlainText {...props}>{value}</PlainText>}
-        <Sprout show={onEdit !== undefined} style={{ position: 'absolute', right: 0 }}>
+        <Sprout show={onEdit !== undefined}
+          style={{ position: 'absolute', right: 0 }}>
           <EditIcon name="pencil" {...R.omit(['primary', 'secondary'], props)}
             color={this.state.editStyle === 'invite' ? 'muted' : 'info'} />
         </Sprout>

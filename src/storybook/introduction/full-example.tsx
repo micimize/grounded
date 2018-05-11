@@ -110,6 +110,13 @@ export default class FullExample extends React.Component<Props, { data: typeof d
     }
   }
 
+  cursor = (key: keyof typeof data) => ({
+    value: this.state.data[key],
+    onEdit: this.state.pressed ? text => this.setState({
+      data: Object.assign(this.state.data, { [key]: text })
+    }) : undefined
+  })
+
   render() {
     let pressed = this.state.pressed
     return (
@@ -152,10 +159,9 @@ export default class FullExample extends React.Component<Props, { data: typeof d
                   style={{ left: 1, top: 1, position: 'relative' }} />
               </Button>
             </Animatable.View>
-            <PlainText primary size="massive" value={this.state.data.title}
-              onEdit={pressed ? () => {/**/} : undefined} />
-            <PlainText secondary size="big" value={this.state.data.subtitle} onEdit={() => {/**/}} />
-            <PlainText muted value={this.state.data.content} onEdit={() => {/**/}} />
+            <PlainText primary size="massive" {...this.cursor('title')} />
+            <PlainText secondary size="big" {...this.cursor('subtitle')} />
+            <PlainText muted {...this.cursor('content')} />
           </View>
         </ThemeProvider>
         {/*<Rating/>*/}
