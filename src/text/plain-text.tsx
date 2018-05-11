@@ -1,7 +1,7 @@
 import React from 'react';
 import * as R from 'ramda';
 import { Easing, TextProps, TextInputProps, ViewProps, NativeSyntheticEvent as NSEvent } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { css } from 'styled-components/native'
 import * as select from '../theme/select'
 import themed from '../theme/themed'
 import withDefaultProps from '../theme/with-default-props'
@@ -11,6 +11,8 @@ import * as Animatable from 'react-native-animatable'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { IconProps } from 'react-native-vector-icons/Icon';
 
+import { Sprout } from '../styled/animations'
+
 const editing = (left, middle, right) => props =>
   !props.editing ? left :
   props.editing === 'invite' ? middle :
@@ -18,42 +20,23 @@ const editing = (left, middle, right) => props =>
 
 const editingColors = (left, right) => props => props.editing === true ?
   props.theme.colors[right[0]][right[1]] :
-  props.theme.colors[left[0]][left[1]] 
+  props.editing ? props.theme.colors[left[0]][left[1]] :
+  'transparent'
 
-const Wrapper = styled(Animatable.View).attrs<{ editing?: 'invite' | boolean } & ViewProps>({
-  transition: ['paddingBottom', 'borderBottomColor', 'borderBottomWidth'] as any
+const Wrapper = styled(Animatable.View).attrs<{ editing?: 'invite' | boolean, multiline: boolean } & ViewProps>({
+  transition: [ 'borderBottomColor', 'borderLeftColor' ] as any
 })`
-  padding-bottom: ${editing(3, 1, 0)}
   border-style: dashed
   border-bottom-width: ${editing(0, 2, 3)}
   border-bottom-color: ${editingColors(['content', 'muted'], ['feedback', 'info'])}
+  ${props => props.multiline ? css`
+    padding-left: ${editing(3, 1, 0)}
+    border-left-width: ${editing(0, 2, 3)(props)}
+    border-left-color: ${editingColors(['content', 'muted'], ['feedback', 'info'])(props)}
+  ` : css`
+    padding-left: 3
+  `}
 `
-
-type SproutProps = { show?: boolean } & Animatable.ViewProps
-
-function Sprout ({
-  show,
-  style: _style,
-  easing = Easing.elastic(1.25),
-  duration = 300,
-  transition: _transition = [],
-  ...props
-}: SproutProps) {
-  let transition = typeof _transition === 'string' ?
-    [ _transition, 'opacity', 'scale' ] :
-    Array.isArray(_transition) ?
-    [ ..._transition, 'opacity', 'scale' ] :
-    [ 'opacity', 'scale' ] as any
-  let style = [
-    _style || {},
-    show ?
-      { opacity: 1, transform: [{ scale: 1 }] } :
-      { opacity: 0, transform: [{ scale: 0.5 }] }
-  ]
-  return (
-    <Animatable.View {...{ style, easing, duration, transition }} {...props}/>
-  )
-}
 
 const EditIcon = themed<IconProps>(styled(Icon)`
   color: ${select.text.color}
@@ -81,8 +64,8 @@ const TextInput = styled.TextInput`
   outline: none
 `
 
-const Input = themed<IP>(({ onEdit, multiline = true, ...props }) =>
-  <TextInput onChangeText={onEdit} multiline={multiline} {...props}/>)
+const Input = themed<IP>(({ onEdit, ...props }) =>
+  <TextInput onChangeText={onEdit} {...props}/>)
 
 function and(f: () => any, other?: () => any) {
   if (other) {
@@ -96,28 +79,31 @@ function and(f: () => any, other?: () => any) {
 class EditablePlainText extends React.Component<IP, { editStyle: 'invite' | true }> {
   state = { editStyle: 'invite' as 'invite' }
   inputProps = () => {
-    let { onFocus: focus, onBlur: blur, value, numberOfLines, } = this.props
+    let { onFocus: focus, onBlur: blur, value, numberOfLines, multiline } = this.props
+    numberOfLines = numberOfLines !== undefined ?
+      numberOfLines :
+      (value || '').split('\n').length
     return {
       value,
-      numberOfLines: numberOfLines !== undefined ?
-        numberOfLines :
-        (value || '').split('\n').length,
+      multiline: multiline || numberOfLines > 1,
+      numberOfLines,
       onFocus: and(() => this.setState({ editStyle: true}), focus),
       onBlur: and(() => this.setState({ editStyle: 'invite'}), blur)
     }
   }
   render() {
-    let { onEdit, onFocus, onBlur, editing, value, numberOfLines, ...props } = this.props
+    let { onEdit, onFocus, onBlur, editing, value, numberOfLines, multiline, ...props } = this.props
+    let inputProps = this.inputProps()
     return (
-      <Wrapper editing={onEdit === undefined ? false : this.state.editStyle}>
+      <Wrapper editing={onEdit === undefined ? false : this.state.editStyle} multiline={inputProps.multiline}>
         {onEdit ?
           <Input onEdit={onEdit} {...this.inputProps()} {...props} /> :
-          <PlainText {...props}>{value}</PlainText>}
+            <PlainText {...props}>{value}</PlainText>}
         <Sprout show={onEdit !== undefined} style={{ position: 'absolute', right: 0 }}>
           <EditIcon name="pencil" {...R.omit(['primary', 'secondary'], props)}
             color={this.state.editStyle === 'invite' ? 'muted' : 'info'} />
         </Sprout>
-      </Wrapper>
+      </Wrapper >
     )
   }
 }

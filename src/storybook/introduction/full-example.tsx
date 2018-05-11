@@ -155,8 +155,7 @@ export default class FullExample extends React.Component<Props, { data: typeof d
             <PlainText primary size="massive" value={this.state.data.title}
               onEdit={pressed ? () => {/**/} : undefined} />
             <PlainText secondary size="big" value={this.state.data.subtitle} onEdit={() => {/**/}} />
-            <Input muted numberOfLines={this.state.data.content.split('\n').length}
-              value={this.state.data.content} />
+            <PlainText muted value={this.state.data.content} onEdit={() => {/**/}} />
           </View>
         </ThemeProvider>
         {/*<Rating/>*/}
