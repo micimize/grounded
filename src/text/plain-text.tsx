@@ -5,7 +5,7 @@ import * as select from '../theme/select'
 import themed from '../theme/themed'
 import withDefaultProps from '../theme/with-default-props'
 
-const Text = styled.Text`
+const PlainText = styled.Text`
   color: ${select.text.color}
   background: ${select.text.background}
   font-size: ${select.text.size}
@@ -25,4 +25,4 @@ const Input = themed<IP>(({ onChange, multiline = true, ...props }) =>
 
 export { Input }
 
-export default themed<TextProps>(Text as any)
+export default themed<TextProps>(PlainText as any)

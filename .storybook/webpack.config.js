@@ -16,7 +16,7 @@ module.exports = (storybookBaseConfig, configType) => {
     path.resolve('./.storybook'),
     nodeModule('react-native-really-awesome-button'),
     nodeModule('react-native-vector-icons'),
-    nodeModule('react-native-ratings')
+    nodeModule('react-native-animatable')
   ]
   // ts load everythin
   storybookBaseConfig.module.rules[0] = {

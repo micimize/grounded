@@ -32,15 +32,15 @@ const Rating = styled(Implementation).attrs<Props>({
   })
 })`
 `
-const Icon = <P extends IconProps>(props: P) => ({ style }) => (
+const icon = <P extends IconProps>(props: P) => ({ style }) => (
   <FontAwesome selectable={false} size={style.width} style={style} {...props}/>
 )
 
-export { Icon }
+export { icon }
 
 export default withDefaultProps<Props>(
   {
-    ratingComponent: Icon({ name: 'star' }),
+    ratingComponent: icon({ name: 'star' }),
     precision: 0.5,
     count: 5,
     ratingWidth: 30,

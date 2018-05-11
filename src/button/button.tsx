@@ -35,10 +35,8 @@ type AwesomeProps = Partial<{
   width: number, // width
 }>
 
-const logProps = C => props => console.log(props) || <C {...props}/>
-
 const size = (base = 100) => ({ theme, size = 0 }: Props) => {
-  return theme.size.button.getSize(size, undefined, base)
+  return theme.size.button.getSize(size, undefined, base) as number
 }
 
 type Props = themed.Props<Partial<
@@ -112,34 +110,45 @@ function toAwesome({
   })
 }
 
-function AButton({ styles, ...props }: Props) {
-  return <AwesomeButton {...props} {...styles ? toAwesome(styles) : {}}/>
+function withDefaultStyles(props: Props) {
+  let color = select.text.color(props)
+  let background = select.text.background(props)
+  return R.mergeDeepRight(props.styles || {}, {
+    button: {
+      color,
+      borderColor: color,
+      backgroundColor: background,
+      fontSize: select.text.size(props),
+    },
+    bottom: {
+      backgroundColor: Color(background).darken(0.25).hex()
+    },
+    placeholder: {
+      backgroundColor: Color(background).fade(0.66).toString(),
+    }
+  })
 }
 
-const asBackground = backgroundColor => ({ backgroundColor })
+function AButton(props: Props) {
+  let {
+    styles,
+    style,
+    raiseLevel = 4,
+    width = size(100)(props),
+    height = size(50)(props),
+    ...passThrough
+  } = props
+  return (
+    <AwesomeButton {...passThrough}
+      /* explicitly pass some styles we want inherited */
+      raiseLevel={raiseLevel}
+      width={width}
+      /* height must include raise level  */
+      height={height + raiseLevel}
+      {...toAwesome(withDefaultStyles(props))}/>
+  )
+}
 
-const Button = styled(AButton).attrs<Props>({
-  styles: props => {
-    let color = select.text.color(props)
-    let background = select.text.background(props)
-    return {
-      button: {
-        color,
-        borderColor: color,
-        backgroundColor: background,
-        fontSize: select.text.size(props),
-      },
-      bottom: asBackground(
-        Color(background).darken(0.25).hex()
-      ),
-      placeholder: asBackground(
-        Color(background).fade(0.66).toString(),
-      ),
-    }
-  },
-  width: size(100),
-  height: size(50)
-})`
-`
+const Button = styled<Props>(AButton)
 
-export default Button as any
+export default AButton
