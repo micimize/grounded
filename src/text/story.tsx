@@ -30,7 +30,7 @@ class SampleInput extends React.Component<any, { value: string }> {
   state = { value: '' }
   render() {
     return (
-      <Input {...this.props} onChange={value => this.setState({ value })}>{this.state.value}</Input>
+      <Input {...this.props} onEdit={value => this.setState({ value })}>{this.state.value}</Input>
     );
   }
 }

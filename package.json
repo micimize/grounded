@@ -9,6 +9,7 @@
     "antd-mobile": "^2.1.8",
     "babel-polyfill": "^6.26.0",
     "color": "^3.0.0",
+    "common-tags": "^1.7.2",
     "js-joda": "^1.8.2",
     "moment": "^2.21.0",
     "ramda": "^0.25.0",
