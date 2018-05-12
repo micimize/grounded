@@ -11,6 +11,7 @@ import * as Animatable from 'react-native-animatable'
 
 import { ThemeProvider } from 'styled-components/native'
 
+import { Sprout } from '../../styled/animations'
 import { stripIndents } from 'common-tags'
 
 /*
@@ -22,32 +23,6 @@ interface Props {
 type Props = {
   showApp?: () => void,
 };
-
-type SproutProps = { show?: boolean } & Animatable.ViewProps
-
-function Sprout ({
-  show,
-  style: _style,
-  easing = Easing.elastic(1.25),
-  duration = 300,
-  transition: _transition = [],
-  ...props
-}: SproutProps) {
-  let transition = typeof _transition === 'string' ?
-    [ _transition, 'opacity', 'scale' ] :
-    Array.isArray(_transition) ?
-    [ ..._transition, 'opacity', 'scale' ] :
-    [ 'opacity', 'scale' ] as any
-  let style = [
-    _style || {},
-    show ?
-      { opacity: 0, transform: [{ scale: 0.5 }] } :
-      { opacity: 1, transform: [{ scale: 1 }] }
-  ]
-  return (
-    <Animatable.View {...{ style, easing, duration, transition }} {...props}/>
-  )
-}
 
 const data = {
   title: 'It sifts from Leaden Sieves - (311)',
@@ -121,51 +96,48 @@ export default class FullExample extends React.Component<Props, { data: typeof d
     let pressed = this.state.pressed
     return (
       <View style={this.styles.wrapper}>
-        <Sprout show={pressed}>
-          <Text> Up and down you go </Text>
-        </Sprout>
-
-        <Button background="success" color="background" theme={theme}
-          onPress={() => this.setState({ pressed: !this.state.pressed })}>Wow</Button>
-        <Text>icon</Text>
-        <Animatable.View
-          duration={300}
-          transition="opacity"
-          easing={Easing.elastic(1.25)}
-          style={{ opacity: Number(!pressed), alignSelf: 'flex-start' }}>
-          <Button color="emphasis" background={pressed ? 'muted' : 'background'} width={35} height={35}
-            disabled={pressed}
-            styles={{ button: { borderRadius: 50 } }}
-            theme={theme}>
-            <Icon name="pencil" selectable={false} size={20}
-              color={theme.colors.feedback.info}
-              style={{ left: 1, top: 1, position: 'relative' }} />
-          </Button>
-        </Animatable.View>
-
         <ThemeProvider theme={theme}>
-          <View style={{ backgroundColor: theme.colors.background.default, padding: 15, borderRadius: 15 }}>
-            <Animatable.View
-              duration={300}
-              transition="opacity"
-              easing={Easing.elastic(1.25)}
-              style={{ opacity: Number(!pressed), position: 'absolute', right: -30, top: 0 }}>
-              <Button color="emphasis" background={pressed ? 'muted' : 'background'} width={25} height={25}
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <View style={{ backgroundColor: theme.colors.background.default, padding: 15, borderRadius: 15, flex: 1 }}>
+              <PlainText primary size="massive" {...this.cursor('title')} />
+              <PlainText secondary size="big" {...this.cursor('subtitle')} />
+              <PlainText style={{ paddingLeft: 10, paddingBottom: 10 }} muted {...this.cursor('content')} />
+            </View>
+            <View style={{ flexDirection: 'column', paddingLeft: 10 }}>
+              <Button color="emphasis" background="background" width={25} height={25}
+                onPress={() => this.setState({ pressed: !this.state.pressed })}
                 disabled={pressed}
                 styles={{ button: { borderRadius: 50 } }}
                 theme={theme}>
                 <Icon name="pencil" selectable={false} size={15}
                   color={theme.colors.feedback.info}
-                  style={{ left: 1, top: 1, position: 'relative' }} />
+                  style={{ position: 'relative' }} />
               </Button>
-            </Animatable.View>
-            <PlainText primary size="massive" {...this.cursor('title')} />
-            <PlainText secondary size="big" {...this.cursor('subtitle')} />
-            <PlainText muted {...this.cursor('content')} />
+              <Sprout show={pressed}>
+                <Button color="emphasis" background="success" width={25} height={25}
+                  disabled={!pressed}
+                  styles={{ button: { borderRadius: 50 } }}
+                  theme={theme}>
+                  <Icon name="check" selectable={false} size={15}
+                    color={theme.colors.background.default}
+                    style={{ position: 'relative' }} />
+                </Button>
+              </Sprout>
+              <Sprout show={pressed}>
+                <Button color="emphasis" background="danger" width={25} height={25}
+                  onPress={() => this.setState({ pressed: !this.state.pressed })}
+                  styles={{ button: { borderRadius: 50 } }}
+                  theme={theme}>
+                  <Icon name="close" selectable={false} size={15}
+                    color={theme.colors.background.default}
+                    style={{ position: 'relative' }} />
+                </Button>
+              </Sprout>
+            </View>
           </View>
         </ThemeProvider>
         {/*<Rating/>*/}
-      </View>
+      </View >
     );
   }
 }
