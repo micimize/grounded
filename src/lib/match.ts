@@ -53,14 +53,32 @@ export function full<
   )
 }
 
-const match: OptionalMatch | FullMatch = (lens, cases) =>
-  R.pipe(
+type IfFull<T, P, Then, Else> = 
+  P extends FLens.Path<T> ? Then : Else
+
+type Ret<T, P, V> = 
+  P extends FLens.Path<T> ? (t: T) => V : (t: T) => V | undefined | null
+
+function Match<
+  V,
+  T,
+  P extends (OLens.Path<T> | FLens.Path<T>),
+  L extends P extends FLens.Path<T> ? FLens<T, P> :
+            P extends OLens.Path<T> ? OLens<T, P> : never,
+  F extends P extends FLens.Path<T> ? FLens<T, P> :
+            P extends OLens.Path<T> ? OLens<T, P> : never,
+>(
+  lens: L,
+  cases: Record<F & string, V>
+): Ret<T, P, V> {
+  return R.pipe(
     R.view(lens),
     R.unless(
       R.isNil,
-      hashTo(cases)
+      hashTo<F & string, V>(cases)
     )
-  )
+  ) as Ret<T, P, V>
+}
 
 let r = full(
   FLens<{ a: { b: { c: 'c' }} }>().a.b.c,

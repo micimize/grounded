@@ -4,13 +4,19 @@ import { DeepPathOf as PathOf, DeepTypeOf as TypeOf, PathAppend } from './deep-p
 const lensPath = <T, P extends PathOf<T>>(p: P) =>
   R.lensPath<TypeOf<T, P>, T>(p)
 
+type Lens<T, Path extends PathOf<T> | void> = (
+  Path extends PathOf<T> ?
+    R.ManualLens<TypeOf<T, Path>, T> :
+    R.ManualLens<T, T>
+)
+
 type PrettyLens<
   T,
-  Path extends PathOf<T> = never,
-> = R.ManualLens<TypeOf<T, Path>, T> & (Path extends never ? {
-  [K in keyof T]: PrettyLens<T, [ K ]>
-} : {
+  Path extends PathOf<T> | void,
+> = Lens<T, Path> & (Path extends PathOf<T> ? {
   [K in keyof TypeOf<T, Path>]: PrettyLens<T, PathAppend<T, Path, K>>
+} : {
+  [K in keyof T]: PrettyLens<T, [ K ]>
 })
 
 function nestedLensPath<T, Path extends PathOf<T>>(p: Path): PrettyLens<T, Path> {
@@ -31,7 +37,7 @@ function PrettyLens<T>() {
       return nestedLensPath<T, [ N ]>([ name ])
     }
   }
-  return new Proxy(lens, handler) as PrettyLens<T>
+  return new Proxy(lens, handler) as PrettyLens<T, void>
 }
 
 namespace PrettyLens {
