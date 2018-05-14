@@ -3,7 +3,7 @@ import { Easing } from 'react-native';
 import Button from '../../button/button'
 import Rating from '../../rating/rating'
 import Time from '../../time/time/time'
-import PlainText, { Input } from '../../text/plain-text'
+import PlainText from '../../text/editable'
 import { View, Text } from 'react-native';
 import theme from '../../theme/default-theme'
 import Icon from 'react-native-vector-icons/FontAwesome'

@@ -1,13 +1,15 @@
 import React from 'react';
-import { TextProps } from 'react-native'
+import { TextInputProps } from 'react-native'
 import styled from 'styled-components/native'
 import * as select from '../theme/select'
 import themed from '../theme/themed'
 
-const PlainText = styled.Text`
+const TextInput = themed<TextInputProps>(styled.TextInput`
+  flex: 1
   color: ${select.text.color}
   background: ${select.text.background}
   font-size: ${select.text.size}
-`
+  outline: none
+` as any)
 
-export default themed<TextProps>(PlainText as any)
+export default TextInput

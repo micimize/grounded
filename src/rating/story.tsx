@@ -63,7 +63,7 @@ this.props.showApp();
           theme={theme}
           primary
           background="muted"
-          onChange={console.log}
+          onEdit={console.log}
           precision={0.5} count={5} ratingWidth={60} ratingComponent={
           ({ style }) => <View>
             <Icon selectable={false} name="rocket" size={style.width} style={style} />

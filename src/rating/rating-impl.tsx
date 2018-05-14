@@ -30,7 +30,7 @@ namespace Rating {
       filled: RatingStyle,
       unfilled: RatingStyle,
     }
-    onChange?: (rating: number) => any,
+    onEdit?: (rating: number) => any,
     style?: ViewStyle,
     readonly?: boolean,
     startingValue?: number
@@ -66,8 +66,8 @@ class Rating extends Component<Rating.Props, State> {
   onRelease = (locationX: number) => {
     const rating = this.getCurrentRating();
     this.setCurrentRating(rating)
-    if (this.props.onChange) {
-      this.props.onChange(rating);
+    if (this.props.onEdit) {
+      this.props.onEdit(rating);
     }
   }
 
@@ -201,7 +201,7 @@ class Rating extends Component<Rating.Props, State> {
     ))
 
     return (
-      <View pointerEvents={readonly ? 'none' : 'auto'}
+      <View pointerEvents={!this.props.onEdit ? 'none' : 'auto'}
         style={[{ width: count * ratingWidth }, style]}>
         <PanHandler onGrant={this.pan} onMove={this.pan} onRelease={this.onRelease}>
           <View style={{ flexDirection: 'row' }}>

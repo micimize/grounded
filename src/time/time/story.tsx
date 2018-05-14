@@ -40,8 +40,8 @@ this.props.showApp();
     return (
       <View style={this.styles.wrapper}>
         <Text style={this.styles.header}>hacking together some sample stuff</Text>
-        <Time secondary time={sampleTime} theme={theme} />
-        <Time size="massive" primary background time={sampleTime} theme={theme} />
+        <Time secondary value={sampleTime} theme={theme} />
+        <Time size="massive" primary background value={sampleTime} theme={theme} />
       </View>
     );
   }

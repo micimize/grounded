@@ -1,7 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
 import theme from '../theme/default-theme'
-import Text, { Input } from './plain-text'
+import Text from './plain-text'
+import Input from './editable'
 
 // Generate required css
 const iconFont = require('react-native-vector-icons/Fonts/FontAwesome.ttf')
