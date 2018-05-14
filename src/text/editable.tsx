@@ -17,25 +17,73 @@ import PlainText from './plain-text'
 import PlainTextInput from './plain-text-input'
 
 import lens from '../lib/lens'
-import { optional as when } from '../lib/match'
 
 const editingColors = (left, right) => props => props.editing === true ?
   props.theme.colors[right[0]][right[1]] :
   props.theme.colors[left[0]][left[1]] 
 
-type P = { editing: boolean | 'invite', multiline: boolean } & Animatable.ViewProps
-const P = lens<P>('?')
+type Keyable<T, Ks extends keyof T = keyof T> = Ks
+  | Ks extends 'true' ? true : Ks
+  | Ks extends 'false' ? false : Ks
+  | Ks extends 'undefined' ? undefined : Ks
+  | Ks extends 'null' ? null : Ks
 
-const isEditing = P.editing
+type ToKeyable = string | true | false | null | undefined | number
+type ToString<K extends string | true | false | null | undefined | number> =
+  K extends true ? 'true' :
+  K extends false ? 'false' :
+  K extends undefined ? 'undefined' :
+  K extends number ? 'number' :
+  K extends null ? 'null' :
+  K
 
-let editing = when(
-  P.editing,
-  {
-    invite: 1,
-    true: 2,
-  },
-  4
+type Cases<Keys extends ToKeyable, DK extends Keys = Keys> = (
+  Record<ToString<DK>, any> & Partial<Record<ToString<Keys>, any>>
 )
+
+type C = Cases<'invite' | boolean | undefined, false>
+
+let propOf = <DK extends ToKeyable>({ default: defaultKey }: { default: DK }) =>
+ <T extends Cases<DK>>(obj: T): <K extends Keyable<T>>(key: K) => T[keyof T] => 
+  R.pipe(
+    R.flip(R.prop)(obj),
+    R.when(
+      R.isNil,
+      R.always(obj[defaultKey as ToString<DK>])
+    )
+  )
+
+type P = { editing: boolean | 'invite', multiline: boolean } & Animatable.ViewProps
+
+type _P = { editing: boolean | 'invite' }
+
+function selector<
+  T,
+  Focus extends ToKeyable,
+  DK extends Focus,
+>(lens: R.ManualLens<Focus, T>, { default: defaultKey }: { default: DK }) {
+  return (cases: Cases<Focus, DK>) => R.pipe(
+    R.view(lens) as (t: T) => Keyable<Cases<Focus, DK>>,
+    propOf<DK>({ default: defaultKey })(cases)
+  ) 
+}
+
+let whenEditing = selector(
+  lens<_P>('!').editing, {
+    default: false
+  }
+)
+
+let paddingWidth = whenEditing({
+  false: 4,
+  invite: 2,
+  true: 1,
+})
+let borderWidth = whenEditing({
+  false: 0,
+  invite: 2,
+  true: 3
+})
 
 const Animated = withDefaultProps<P>(
   {
@@ -53,12 +101,12 @@ const Wrapper = styled<P>(Animated)`
   flex-direction: row;
   align-items: ${props => props.multiline ? 'flex-start' : 'center'};
   border-style: dashed;
-  padding-bottom: ${editing(4, 2, 1)};
-  border-bottom-width: ${editing(0, 2, 3)};
+  padding-bottom: ${paddingWidth};
+  border-bottom-width: ${borderWidth};
   border-bottom-color: ${editingColors(['content', 'muted'], ['feedback', 'info'])};
   ${props => props.multiline ? css`
-    padding-left: ${editing(4, 2, 1)}
-    border-left-width: ${editing(0, 2, 3)(props)}
+    padding-left: ${paddingWidth};
+    border-left-width: ${borderWidth};
     border-left-color: ${editingColors(['content', 'muted'], ['feedback', 'info'])(props)}
   ` : css`
     padding-left: 4
