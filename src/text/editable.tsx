@@ -16,16 +16,28 @@ import { Sprout } from '../styled/animations'
 import PlainText from './plain-text'
 import PlainTextInput from './plain-text-input'
 
-const editing = (left, middle, right) => props =>
-  !props.editing ? left :
-  props.editing === 'invite' ? middle :
-  right
+import lens from '../lib/lens'
+import { optional as when } from '../lib/match'
 
 const editingColors = (left, right) => props => props.editing === true ?
   props.theme.colors[right[0]][right[1]] :
   props.theme.colors[left[0]][left[1]] 
 
-const Animated = withDefaultProps<Animatable.ViewProps>(
+type P = { editing: boolean | 'invite', multiline: boolean } & Animatable.ViewProps
+const P = lens<P>('?')
+
+const isEditing = P.editing
+
+let editing = when(
+  P.editing,
+  {
+    invite: 1,
+    true: 2,
+  },
+  4
+)
+
+const Animated = withDefaultProps<P>(
   {
     useNativeDriver: true,
     transition: [
@@ -33,10 +45,10 @@ const Animated = withDefaultProps<Animatable.ViewProps>(
       'paddingLeft', 'borderLeftColor', 'borderLeftWidth'
     ] as any
   },
-  Animatable.View
+  Animatable.View as any
 )
 
-const Wrapper = styled<{ editing?: boolean, multiline: boolean } & Animatable.ViewProps>(Animated)`
+const Wrapper = styled<P>(Animated)`
   margin-bottom: 12px;
   flex-direction: row;
   align-items: ${props => props.multiline ? 'flex-start' : 'center'};
