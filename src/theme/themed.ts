@@ -4,7 +4,8 @@ import defaultTheme from './default-theme'
 import * as Color from './color/types'
 import * as Size from './size/types'
 
-import withDefaultProps from './with-default-props'
+import Lens from '../lib/lens'
+import { withDefaultProps } from '../lib/wrapper-components'
 
 type Theme = Color.Theme & Size.Theme
 
@@ -18,6 +19,8 @@ const defaultProps = <DP extends object>(dp: DP): Themed<DP> =>
 const withTheme = <P extends object>(Cmp: React.ComponentType<Themed<P>>) =>
   withDefaultProps<Themed<P>>(defaultThemeProps as Partial<Themed<P>>, Cmp)
 
-export { Themed as Props, defaultProps }
+export const by = Lens<Theme>()
+
+export { Themed as Props, defaultProps, by as with }
 
 export default withTheme

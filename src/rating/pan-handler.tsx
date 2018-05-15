@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 import { pipe } from 'ramda'
 
-import withDefaultProps from '../theme/with-default-props';
+import { withDefaultProps } from '../lib/wrapper-components';
 
 const defaultStyle = {
   flexDirection: 'row' as 'row',

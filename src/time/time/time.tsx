@@ -3,7 +3,7 @@ import styled from 'styled-components/native'
 import { LocalTime, DateTimeFormatter } from 'js-joda'
 import * as select from '../../theme/select'
 import * as themed from '../../theme/themed'
-import withDefaultProps from '../../theme/with-default-props'
+import { withDefaultProps } from '../../lib/wrapper-components'
 import Text from '../../text/editable'
 
 type Time = LocalTime

@@ -18,4 +18,4 @@ const withDefaultProps = <P extends object, DP extends Partial<P> = Partial<P>>(
   return (Cmp as React.ComponentType<any>) as React.ComponentType<Props>
 }
 
-export default withDefaultProps
+export { withDefaultProps }

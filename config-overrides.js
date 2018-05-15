@@ -1,4 +1,12 @@
 const path = require('path')
+const fs = require('fs')
+const webpack = require('webpack')
+
+const appDirectory = fs.realpathSync(process.cwd());
+const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
+const nodeModule = mod => resolveApp(`node_modules/${mod}`)
+
+
 /* config-overrides.js */
 module.exports = function override (config, env) {
   // https://www.npmjs.com/package/ts-loader#devtool--sourcemaps
@@ -34,7 +42,12 @@ module.exports = function override (config, env) {
     // https://github.com/SZzzzz/react-scripts-ts-antd/blob/master/config/loaders.js#L54
     // https://github.com/SZzzzz/react-scripts-ts-antd/issues/3
     test: /\.(tsx?|jsx?)$/,
-    include,
+    include: [
+      nodeModule('react-native-really-awesome-button'),
+      nodeModule('react-native-vector-icons'),
+      nodeModule('react-native-animatable'),
+      ...include
+    ],
     exclude,
     // babel config in .babelrc
     use: [ 'babel-loader', tsLoader ]

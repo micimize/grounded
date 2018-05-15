@@ -8,7 +8,7 @@ import { View, Text, Animated, TextStyle, ViewStyle } from 'react-native';
 import PanHandler from './pan-handler'
 
 function times<T>(num: number, fn: (num: number) => T): Array<T> {
-  let unfold = n => n >= num ? false : [fn(n), n + 1]
+  let unfold = (n: number) => n >= num ? false : [fn(n), n + 1] as [T, number]
   return R.unfold(unfold, 0)
 }
 

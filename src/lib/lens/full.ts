@@ -3,7 +3,6 @@ import { DeepPathOf as PathOf, DeepTypeOf as TypeOf, PathAppend } from './deep-p
 
 const lensPath = <T, P extends PathOf<T>>(p: P) =>
   R.lensPath<TypeOf<T, P>, T>(p)
-
 type Lens<T, Path extends PathOf<T> | void> = (
   Path extends PathOf<T> ?
     R.ManualLens<TypeOf<T, Path>, T> :

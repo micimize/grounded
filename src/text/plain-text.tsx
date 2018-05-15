@@ -5,9 +5,9 @@ import * as select from '../theme/select'
 import themed from '../theme/themed'
 
 const PlainText = styled.Text`
-  color: ${select.text.color}
-  background: ${select.text.background}
-  font-size: ${select.text.size}
+  color: ${select.text.color};
+  background: ${select.text.background};
+  font-size: ${select.text.size};
 `
 
 export default themed<TextProps>(PlainText as any)

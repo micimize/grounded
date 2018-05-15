@@ -5,7 +5,7 @@ import Implementation from './rating-impl'
 import styled from 'styled-components/native'
 import * as select from '../theme/select'
 import * as themed from '../theme/themed'
-import withDefaultProps from '../theme/with-default-props'
+import { withDefaultProps } from '../lib/wrapper-components'
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { IconProps } from 'react-native-vector-icons/Icon'
