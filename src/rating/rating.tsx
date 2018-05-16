@@ -3,7 +3,7 @@ import * as R from 'ramda'
 import Color from 'color'
 import Implementation from './rating-impl'
 import styled from 'styled-components/native'
-import * as select from '../theme/select'
+import * as select from '../theme/style-props'
 import * as themed from '../theme/themed'
 import { withDefaultProps } from '../lib/wrapper-components'
 

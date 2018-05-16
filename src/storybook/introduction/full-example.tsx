@@ -101,7 +101,7 @@ export default class FullExample extends React.Component<Props, { data: typeof d
             <View style={{ backgroundColor: theme.colors.background.default, padding: 15, borderRadius: 15, flex: 1 }}>
               <PlainText primary size="massive" {...this.cursor('title')} />
               <PlainText secondary size="big" {...this.cursor('subtitle')} />
-              <PlainText style={{ paddingLeft: 10, paddingBottom: 10 }} muted {...this.cursor('content')} />
+              <PlainText multiline style={{ paddingLeft: 10, paddingBottom: 10 }} muted {...this.cursor('content')} />
             </View>
             <View style={{ flexDirection: 'column', paddingLeft: 10 }}>
               <Button color="emphasis" background="background" width={25} height={25}

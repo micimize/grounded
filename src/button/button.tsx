@@ -4,7 +4,7 @@ import * as R from 'ramda'
 import Color from 'color'
 import AwesomeButton from 'react-native-really-awesome-button'
 import styled from 'styled-components/native'
-import * as select from '../theme/select'
+import * as select from '../theme/style-props'
 import * as themed from '../theme/themed'
 import { withDefaultProps } from '../lib/wrapper-components';
 
@@ -149,6 +149,11 @@ function AButton(props: Props) {
   )
 }
 
-const Button = styled<Props>(AButton)
+type P = Props
+namespace AButton {
+  export type Props = P
+}
+
+const Button = themed.default<Props>(AButton)
 
 export default AButton

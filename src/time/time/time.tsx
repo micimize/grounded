@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native'
 import { LocalTime, DateTimeFormatter } from 'js-joda'
-import * as select from '../../theme/select'
+import * as select from '../../theme/style-props'
 import * as themed from '../../theme/themed'
 import { withDefaultProps } from '../../lib/wrapper-components'
 import Text from '../../text/editable'

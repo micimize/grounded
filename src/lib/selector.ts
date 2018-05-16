@@ -21,10 +21,18 @@ type Cases<Keys extends ToKeyable, DK extends Keys = Keys> = (
 
 type C = Cases<'invite' | boolean | undefined, false>
 
-let propOf = <DK extends ToKeyable>({ default: defaultKey }: { default: DK }) =>
+let propOf = <DK extends ToKeyable>({ default: defaultKey, or }: {
+  default: DK,
+  or?: <T extends any = any>(props: T) => any
+}) =>
  <T extends Cases<DK>>(obj: T): <K extends Keyable<T>>(key: K) => T[keyof T] => 
   R.pipe(
     R.flip(R.prop)(obj),
+    R.when(
+      R.isNil,
+      // closure so this is called lazily
+      () => or ? or<T>(obj) : undefined
+    ),
     R.when(
       R.isNil,
       R.always(obj[defaultKey as ToString<DK>])
@@ -33,25 +41,28 @@ let propOf = <DK extends ToKeyable>({ default: defaultKey }: { default: DK }) =>
 
 // we're making assumptions because I'm tired of type system hacking
 const isNestedSelector = <P extends any>() =>
-  (k: any): k is (p: P) => any =>
+  (k: any): k is ((p: P) => any) =>
     typeof k === 'function'
 
 function Selector<
   T,
   Focus extends ToKeyable,
   DK extends Focus,
->(lens: R.ManualLens<Focus, T>, { default: defaultKey }: { default: DK }) {
+>(lens: R.ManualLens<Focus, T>, { default: defaultKey, or }: { default: DK, or?: <T>(props: T) => any }) {
   return (cases: Cases<Focus, DK>) => props => R.pipe(
     R.view(lens) as (t: T) => Keyable<Cases<Focus, DK>>,
-    propOf<DK>({ default: defaultKey })(cases),
-    R.when(isNestedSelector<typeof props>(), R.apply(R.__, props))
+    propOf<DK>({ default: defaultKey, or })(cases),
+    R.when(isNestedSelector<typeof props>(), f => f(props))
   ) 
 }
 
 type Pick = <T, F extends ToKeyable | { default: ToKeyable }>( l: R.ManualLens<F, T>) => ((t: T) => F)
-export const pick: Pick = R.pipe(
-  R.view,
-  R.when(R.is(Object), R.prop('default'))
+export const pick: Pick = lens => R.pipe(
+  R.view(lens),
+  R.when(
+    R.and(R.is(Object), R.has('default')),
+    R.prop('default')
+  )
 )
 
 export default Selector
