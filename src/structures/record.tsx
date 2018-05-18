@@ -18,22 +18,41 @@ type Props<T> = {
 
 type State<T> = { changed: Partial<T> }
 
-type Field<T> = <
-  K extends keyof T,
-  P extends Editable.Props<T[K]>,
-  E extends React.ReactElement<Partial<P>>
-  >(field: K) => (element: E) => React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>
+type Fields<T> = {
+  [K in keyof T]: <
+    P extends Editable.Props<T[K]>,
+    E extends React.ReactElement<Partial<P>>
+  >(element: E) => React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>
+}
 
 // createRecord takes a map of fields to Editables, as well as a way to "render" them
 const createRecord = <
   T extends object,
   D extends Editable.DisplayProps<T> = Editable.DisplayProps<T>,
   E extends Editable.EditorProps<T> & D = Editable.EditorProps<T> & D,
-  >(Layout: React.ComponentType<E & { field: Field<T> }>) => {
+  >(Layout: React.ComponentType<E & { field: Fields<T> }>) => {
   let valueOf = <K extends keyof T>(value: T | undefined, key: K) =>
     value ? (value as T)[key] : undefined
+
+  let getter = (getter: (key: keyof T) => any) =>
+    new Proxy({}, {
+      get(obj: {}, key: keyof T ) {
+        return getter(key)
+      }
+    }) as Fields<T>
+  
   class RecordEditor extends React.Component<E, State<T>> {
     state: State<T> = { changed: {} }
+
+    field: Fields<T> = getter(
+      <K extends keyof T>(field: K) => <
+        P extends Editable.Props<T[K]>,
+        E extends React.ReactElement<Partial<P>>
+      >(element: E) => React.cloneElement(
+        element as any as React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>,
+        this.cursor(field) as Partial<P>
+      )
+    )
 
     cursor = <K extends keyof T>(key: K) => ({
       value: this.state.changed[key] || valueOf(this.props.value, key),
@@ -42,16 +61,6 @@ const createRecord = <
       })
     })
 
-    field: Field<T> = <
-      K extends keyof T,
-      P extends Editable.Props<T[K]>,
-      E extends React.ReactElement<Partial<P>>
-      >(field: K) => (element: E) =>
-        React.cloneElement(
-          element as any as React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>,
-          this.cursor(field) as Partial<P>
-        )
-
     render() {
       return <Layout field={this.field} {...R.omit(['onEdit'], this.props)} />
     }
@@ -59,15 +68,16 @@ const createRecord = <
 
   let Record = (props: D) => (
     <Layout
-      field={<
-      K extends keyof T,
-      P extends Editable.Props<T[K]>,
-      E extends React.ReactElement<Partial<P>>
-      >(field: K) => (element: E) =>
-        React.cloneElement(
-          element as any as React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>,
-          { value: valueOf(props.value, field) } as Partial<P>
-        )}
+      field={getter(<
+        K extends keyof T,
+        P extends Editable.Props<T[K]>,
+        E extends React.ReactElement<Partial<P>>
+        >(field: K) => (element: E) =>
+          React.cloneElement(
+            element as any as React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>,
+            { value: valueOf(props.value, field) } as Partial<P>
+          )
+      )}
       {...R.omit(['onEdit'], props)} />
   )
 

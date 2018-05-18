@@ -30,9 +30,9 @@ let Record = createRecord<
   Partial<Poem> & Pick<Poem, 'title' | 'author' | 'content'>
 >(({ field, ...props }) => (
   <View style={{ backgroundColor: theme.colors.background.default, padding: 15, borderRadius: 15, flex: 1 }}>
-    {field('title')(<PlainText primary size="massive" />)}
-    {field('author')(<PlainText secondary size="big" />)}
-    {field('content')(<PlainText multiline style={{ paddingLeft: 10, paddingBottom: 10 }} muted />)}
+    {field.title(<PlainText primary size="massive" />)}
+    {field.author(<PlainText secondary size="big" />)}
+    {field.content(<PlainText multiline style={{ paddingLeft: 10, paddingBottom: 10 }} muted />)}
   </View>
 ))
 
