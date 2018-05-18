@@ -9,10 +9,12 @@ import Time from '../time/time/story'
 import Button from '../button/story'
 import Rating from '../rating/story'
 import Text from '../text/story'
+import OrderedList from '../structures/story'
 
 storiesOf('Introduction', module)
   .add('Goals', () => <Goals />)
-  .add('Full Example', () => <FullExample />);
+  .add('Full Example', () => <FullExample />)
+  .add('Ordered List', () => <OrderedList />);
 
 storiesOf('Primitives', module)
   .add('Text', () => <Text />);

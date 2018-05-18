@@ -5,8 +5,9 @@ import Color from 'color'
 import AwesomeButton from 'react-native-really-awesome-button'
 import styled from 'styled-components/native'
 import * as select from '../theme/style-props'
-import * as themed from '../theme/themed'
 import { withDefaultProps } from '../lib/wrapper-components';
+
+import themed from '../theme/themed'
 
 // https://github.com/rcaferati/react-native-really-awesome-button
 
@@ -39,7 +40,7 @@ const size = (base = 100) => ({ theme, size = 0 }: Props) => {
   return theme.size.button.getSize(size, undefined, base) as number
 }
 
-type Props = themed.Props<Partial<
+type ButtonProps = Partial<
   Omit<AwesomeProps,
     | 'backgroundColor'
     | 'backgroundDarker'
@@ -81,7 +82,9 @@ type Props = themed.Props<Partial<
       backgroundColor: string,
     }>
   }>
-}>>
+}>
+
+type Props = themed.Inner<ButtonProps>
 
 function toAwesome({
   button = {}, active, placeholder, progress, bottom
@@ -113,6 +116,7 @@ function toAwesome({
 function withDefaultStyles(props: Props) {
   let color = select.text.color(props)
   let background = select.text.background(props)
+  console.log({ color, background })
   return R.mergeDeepRight(props.styles || {}, {
     button: {
       color,
@@ -149,11 +153,10 @@ function AButton(props: Props) {
   )
 }
 
-type P = Props
-namespace AButton {
-  export type Props = P
+namespace Button {
+  export type Props = themed<ButtonProps>
 }
 
-const Button = themed.default<Props>(AButton)
+const Button = themed(AButton)
 
-export default AButton
+export default Button

@@ -1,5 +1,9 @@
 import React from 'react';
 
+// todo this should actually be the component type
+type withDefaultProps<P extends object, DP extends Partial<P> = Partial<P>> = 
+  Omit<P, keyof DP> & Partial<DP>
+
 const withDefaultProps = <P extends object, DP extends Partial<P> = Partial<P>>(
   defaultProps: DP,
   Cmp: React.ComponentType<P>
@@ -18,6 +22,23 @@ const withDefaultProps = <P extends object, DP extends Partial<P> = Partial<P>>(
   return Cmp as React.ComponentType<Props>
 }
 
+namespace withShadowedProps {
+  export type Keys<P extends object, Keys extends keyof P> = 
+    React.ComponentType<Omit<P, Keys>>
+}
+type withShadowedProps<P extends object, DP extends Partial<P> = Partial<P>> = 
+  React.ComponentType<Omit<P, keyof DP>>
+
+const withShadowedProps = <P extends object, DP extends Partial<P> = Partial<P>>(
+  shadowedProps: DP,
+  Cmp: React.ComponentType<P>
+) => {
+  type RemainingProps = Omit<P, keyof DP>
+  // we override return type definition by turning type checker off
+  // for original props  and setting the correct return type
+  return (props: RemainingProps) => <Cmp {...props} {...shadowedProps}/>
+}
+
 namespace Editable {
   export type DisplayProps<T> = {
     value?: T
@@ -30,25 +51,30 @@ namespace Editable {
   export type SugarProps = {
     editing: false | 'blurred' | 'focused'
   }
-  export type State = { editor: 'blurred' | 'focused' }
+  export type State = { editorState: 'blurred' | 'focused' }
+
+  export type Props<T> = DisplayProps<T> & EditorProps<T>
 }
 function createEditable<
   T,
   DisplayProps extends Editable.DisplayProps<T>,
   EditorProps extends Editable.EditorProps<T> & DisplayProps,
   SugarProps extends Editable.SugarProps,
->({ editor: Editor, sugar: Sugar, display: Display }: {
+>(args: {
   // sugar needs to be it's own wrapper component to handle transitions
   display: React.ComponentType<DisplayProps>,
   editor: React.ComponentType<EditorProps>,
   sugar: React.ComponentType<SugarProps>
 }) {
+  const { display: Display, editor: Editor, sugar: Sugar } = args
   return class Editable extends React.Component<EditorProps, Editable.State> {
-    state: Editable.State = { editor: 'blurred' }
+    state: Editable.State = { editorState: 'blurred' }
     editorProps = () => {
       let { onEdit, onFocus, onBlur, value } = this.props
-      let setter = (editor: 'focused' | 'blurred', cb = () => {/**/}) =>
-        () => (this.setState({ editor }), cb())
+      let setter = (editorState: 'focused' | 'blurred', cb) => {
+        let set = () => (this.setState({ editorState }))
+        return cb ? () => (set(), cb()) : set
+      }
       return {
         value,
         onEdit,
@@ -60,7 +86,7 @@ function createEditable<
       let { onEdit, onFocus, onBlur, value, style, ...props } = this.props as any
       let inputProps = this.editorProps()
       return (
-        <Sugar editing={onEdit === undefined ? false : this.state.editor} {...props}>
+        <Sugar editing={onEdit === undefined ? false : this.state.editorState} {...props}>
           {onEdit ?
             <Editor style={style} {...this.editorProps()} {...props} /> :
             <Display style={style} value={value} {...props}/>}
@@ -69,5 +95,14 @@ function createEditable<
     }
   }
 }
+type Editable<
+  T,
+  DisplayProps extends Editable.DisplayProps<T>
+    = Editable.DisplayProps<T>,
+  EditorProps extends Editable.EditorProps<T> & DisplayProps
+    = Editable.EditorProps<T> & DisplayProps,
+  SugarProps extends Editable.SugarProps
+    = Editable.SugarProps,
+> = React.ComponentType<EditorProps>
 
-export { withDefaultProps, createEditable }
+export { withDefaultProps, withShadowedProps, Editable, createEditable }

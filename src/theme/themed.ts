@@ -17,7 +17,12 @@ const defaultThemeProps = { theme: defaultTheme }
 const defaultProps = <DP extends object>(dp: DP): Themed<DP> =>
   Object.assign({}, defaultThemeProps, dp)
 
-type withTheme<Props> = Themed<Props>
+namespace withTheme {
+  export type Inner<Props> = Themed<Props>
+}
+
+type withTheme<Props> = Props & { theme?: Theme } & Color.Props & Size.Props
+
 const withTheme = <P extends object>(Cmp: React.ComponentType<P>) =>
   withDefaultProps<Themed<P>>(
     defaultThemeProps as Partial<Themed<P>>,
