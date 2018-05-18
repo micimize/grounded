@@ -49,7 +49,7 @@ namespace Editable {
     onEdit?: (value: T) => any,
   }
   export type SugarProps = {
-    editing: false | 'blurred' | 'focused'
+    editing: false | 'blurred' | 'focused',
   }
   export type State = { editorState: 'blurred' | 'focused' }
 

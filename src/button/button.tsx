@@ -116,7 +116,6 @@ function toAwesome({
 function withDefaultStyles(props: Props) {
   let color = select.text.color(props)
   let background = select.text.background(props)
-  console.log({ color, background })
   return R.mergeDeepRight(props.styles || {}, {
     button: {
       color,

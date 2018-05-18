@@ -9,8 +9,6 @@ import theme from '../../theme/default-theme'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import * as Animatable from 'react-native-animatable'
 
-import OrderedList from '../../structures/ordered-list'
-
 import { ThemeProvider } from 'styled-components/native'
 
 import { Sprout } from '../../styled/animations'
@@ -25,10 +23,6 @@ interface Props {
 }
 */
 
-type Props = {
-  showApp?: () => void,
-};
-
 let data = poems[1]
 type Poem = typeof data
 
@@ -39,17 +33,16 @@ let Record = createRecord<
     title: PlainText,
     author: PlainText,
     content: PlainText
-  })(
-  ({ title: Title, author: Author, content: Content }) => (
+  })(fields => (props: any) => (
     <View style={{ backgroundColor: theme.colors.background.default, padding: 15, borderRadius: 15, flex: 1 }}>
-      <Title primary size="massive" />
-      <Author secondary size="big" />
-      <Content multiline style={{ paddingLeft: 10, paddingBottom: 10 }} muted />
+      <fields.title key="title" primary size="massive" />
+      <fields.author key="author" secondary size="big" />
+      <fields.content multiline style={{ paddingLeft: 10, paddingBottom: 10 }} muted />
     </View>
   )
 )
 
-export default class FullExample extends React.Component<Props, { data: typeof data, pressed: boolean }> {
+export default class FullExample extends React.Component<{}, { data: typeof data, pressed: boolean }> {
   state = { data, pressed: false }
   styles = {
     wrapper: {
@@ -71,18 +64,8 @@ export default class FullExample extends React.Component<Props, { data: typeof d
     },
   };
 
-  showApp(event: Event) {
-    event.preventDefault();
-    if (this.props.showApp) {
-      this.props.showApp();
-    }
-  }
-
-  cursor = (key: keyof typeof data) => ({
-    value: this.state.data[key],
-    onEdit: this.state.pressed ? text => this.setState({
-      data: Object.assign(this.state.data, { [key]: text })
-    }) : undefined
+  onEdit = partial => this.setState({
+    data: Object.assign(this.state.data, partial)
   })
 
   render() {
@@ -92,12 +75,7 @@ export default class FullExample extends React.Component<Props, { data: typeof d
       <View style={this.styles.wrapper}>
         <ThemeProvider theme={theme}>
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-            <OrderedList data={['foo', 'bar']} renderItem={({item}) => <Text>{item}</Text>}/>
-            <View style={{ backgroundColor: theme.colors.background.default, padding: 15, borderRadius: 15, flex: 1 }}>
-              <PlainText primary size="massive" {...this.cursor('title')} />
-              <PlainText secondary size="big" {...this.cursor('published')} />
-              <PlainText multiline style={{ paddingLeft: 10, paddingBottom: 10 }} muted {...this.cursor('content')} />
-            </View>
+            <Record value={this.state.data} onEdit={pressed ? this.onEdit : undefined} />
             <View style={{ flexDirection: 'column', paddingLeft: 10 }}>
               <Button.Icon
                 color="info"
