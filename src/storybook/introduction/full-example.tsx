@@ -28,19 +28,13 @@ type Poem = typeof data
 
 let Record = createRecord<
   Partial<Poem> & Pick<Poem, 'title' | 'author' | 'content'>
->()(
-  {
-    title: PlainText,
-    author: PlainText,
-    content: PlainText
-  })(fields => (props: any) => (
-    <View style={{ backgroundColor: theme.colors.background.default, padding: 15, borderRadius: 15, flex: 1 }}>
-      <fields.title key="title" primary size="massive" />
-      <fields.author key="author" secondary size="big" />
-      <fields.content multiline style={{ paddingLeft: 10, paddingBottom: 10 }} muted />
-    </View>
-  )
-)
+>(({ field, ...props }) => (
+  <View style={{ backgroundColor: theme.colors.background.default, padding: 15, borderRadius: 15, flex: 1 }}>
+    {field('title')(<PlainText primary size="massive" />)}
+    {field('author')(<PlainText secondary size="big" />)}
+    {field('content')(<PlainText multiline style={{ paddingLeft: 10, paddingBottom: 10 }} muted />)}
+  </View>
+))
 
 export default class FullExample extends React.Component<{}, { data: typeof data, pressed: boolean }> {
   state = { data, pressed: false }

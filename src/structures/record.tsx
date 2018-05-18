@@ -18,72 +18,64 @@ type Props<T> = {
 
 type State<T> = { changed: Partial<T> }
 
-type Editables<T extends object> = {
-  [K in keyof T]: Editable<T[K]>
-}
-
-type ComponentProps<T, Default = any> =
-  T extends (props: infer P & { children?: React.ReactNode }) => any ? P :
-  T extends new (props: infer P) => any ? P:
-  Default
-
-type ShadowedEditables<T extends object, Components extends Editables<T>> = {
-  [K in keyof T]: withShadowedProps.Keys<
-    ComponentProps<Components[K], Editable.Props<T[K]>>,
-    'value' | 'onEdit'
-  >
-}
+type Field<T> = <
+  K extends keyof T,
+  P extends Editable.Props<T[K]>,
+  E extends React.ReactElement<Partial<P>>
+  >(field: K) => (element: E) => React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>
 
 // createRecord takes a map of fields to Editables, as well as a way to "render" them
-const createRecord = <T extends object>() =>
-  <Components extends Editables<T>>(components: Components) =>
-  <
-    Shadowed extends ShadowedEditables<T, Components>,
-    D extends Editable.DisplayProps<T>,
-    E extends Editable.EditorProps<T> & D
-  >(
-    Layout: (components: Shadowed) => React.ComponentType<E>
-  ) => {
+const createRecord = <
+  T extends object,
+  D extends Editable.DisplayProps<T> = Editable.DisplayProps<T>,
+  E extends Editable.EditorProps<T> & D = Editable.EditorProps<T> & D,
+  >(Layout: React.ComponentType<E & { field: Field<T> }>) => {
+  let valueOf = <K extends keyof T>(value: T | undefined, key: K) =>
+    value ? (value as T)[key] : undefined
   class RecordEditor extends React.Component<E, State<T>> {
     state: State<T> = { changed: {} }
 
     cursor = <K extends keyof T>(key: K) => ({
-      value: this.state.changed[key] || (
-        this.props.value ? (this.props.value as T)[key] : undefined
-      ),
+      value: this.state.changed[key] || valueOf(this.props.value, key),
       onEdit: (value: T[K]) => this.setState({
         changed: Object.assign(this.state.changed, { [key]: value })
       })
     })
 
+    field: Field<T> = <
+      K extends keyof T,
+      P extends Editable.Props<T[K]>,
+      E extends React.ReactElement<Partial<P>>
+      >(field: K) => (element: E) =>
+        React.cloneElement(
+          element as any as React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>,
+          this.cursor(field) as Partial<P>
+        )
+
     render() {
-      let RecordEditor = Layout(
-          R.mapObjIndexed(
-          (Component, key) =>
-            withShadowedProps(this.cursor(key), Component),
-          components
-        ) as Shadowed
-      )
-      return <RecordEditor {...this.props} />
+      return <Layout field={this.field} {...R.omit(['onEdit'], this.props)} />
     }
   }
-  let Fields = (value?: T) => R.mapObjIndexed(
-    (Component, key) =>
-      withShadowedProps(
-        { value: value ? value[key] : undefined },
-        Component
-      ),
-    components
-  ) as Shadowed
-  const Record = (props: D) => {
-    let RecordDisplay = Layout(Fields(props.value))
-    return <RecordDisplay {...props}/>
-  }
+
+  let Record = (props: D) => (
+    <Layout
+      field={<
+      K extends keyof T,
+      P extends Editable.Props<T[K]>,
+      E extends React.ReactElement<Partial<P>>
+      >(field: K) => (element: E) =>
+        React.cloneElement(
+          element as any as React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>,
+          { value: valueOf(props.value, field) } as Partial<P>
+        )}
+      {...R.omit(['onEdit'], props)} />
+  )
+
   return createEditable<T, D, E, Editable.SugarProps>({
     display: Record,
     editor: RecordEditor,
-    sugar: p => <View style={{ flex: 1 }} {...p}/>
+    sugar: p => <View style={{ flex: 1 }} {...p} />
   })
- }
+}
 
 export default createRecord
