@@ -80,7 +80,9 @@ function createEditable<
           (this.state.value === undefined ? value : this.state.value) :
           value,
         onEdit: controlledEdit ?
-          (value: T) => this.setState({ value: controlledEdit(value, this.state.value) }) :
+          this.state.editorState === 'focused' ?
+            (value: T) => this.setState({ value: controlledEdit(value, this.state.value) }) :
+            undefined :
           onEdit,
         onFocus: setter('focused', onFocus),
         onBlur: setter('blurred', onBlur),

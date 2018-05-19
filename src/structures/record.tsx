@@ -58,9 +58,10 @@ const createRecord = <
 
     cursor = <K extends keyof T>(key: K) => ({
       value: valueOf(this.props.value, key),
-      onEdit: (value: T[K]) => (
-        this.props.onEdit && this.props.onEdit({ [key]: value } as any as Partial<T>)
-      )
+      onEdit: this.props.onEdit ?
+        (value: T[K]) => this.props.onEdit &&
+          this.props.onEdit({ [key]: value } as any as Partial<T>) :
+        undefined
     })
 
     render() {
@@ -89,7 +90,7 @@ const createRecord = <
     let focused = editing === 'focused'
     let blurred = editing === 'blurred'
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, flexDirection: 'row' }}>
         {children}
         <View style={{ flexDirection: 'column', paddingLeft: 10 }}>
           <Sprout show={Boolean(editing)}>
