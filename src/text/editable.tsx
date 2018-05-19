@@ -23,7 +23,7 @@ const EditablePlainText = createEditable<
 const EditablePlainText = createEditable({
   display: PlainText,
   editor: PlainTextInput,
-  sugar: Box,
+  controller: Box,
 })
 
 const Editable = themed.default<PlainTextInput.Props>(EditablePlainText as any)

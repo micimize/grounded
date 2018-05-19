@@ -9,6 +9,9 @@ import { withShadowedProps, Editable, createEditable } from '../lib/wrapper-comp
 
 import { ThemeProvider } from 'styled-components/native'
 
+import * as Button from '../button'
+import { Sprout } from '../styled/animations'
+
 import poems from '../storybook/poems'
 
 type Props<T> = {
@@ -29,8 +32,8 @@ type Fields<T> = {
 const createRecord = <
   T extends object,
   D extends Editable.DisplayProps<T> = Editable.DisplayProps<T>,
-  E extends Editable.EditorProps<T> & D = Editable.EditorProps<T> & D,
-  >(Layout: React.ComponentType<E & { field: Fields<T> }>) => {
+  E extends Editable.EditorProps<Partial<T>> & D = Editable.EditorProps<Partial<T>> & D,
+  >(Layout: React.ComponentType<E & { field: Fields<T>, controls?: React.ReactElement<any> }>) => {
   let valueOf = <K extends keyof T>(value: T | undefined, key: K) =>
     value ? (value as T)[key] : undefined
 
@@ -41,8 +44,7 @@ const createRecord = <
       }
     }) as Fields<T>
   
-  class RecordEditor extends React.Component<E, State<T>> {
-    state: State<T> = { changed: {} }
+  class RecordEditor extends React.Component<E, {}> {
 
     field: Fields<T> = getter(
       <K extends keyof T>(field: K) => <
@@ -55,14 +57,16 @@ const createRecord = <
     )
 
     cursor = <K extends keyof T>(key: K) => ({
-      value: this.state.changed[key] || valueOf(this.props.value, key),
-      onEdit: (value: T[K]) => this.setState({
-        changed: Object.assign(this.state.changed, { [key]: value })
-      })
+      value: valueOf(this.props.value, key),
+      onEdit: (value: T[K]) => (
+        this.props.onEdit && this.props.onEdit({ [key]: value } as any as Partial<T>)
+      )
     })
 
     render() {
-      return <Layout field={this.field} {...R.omit(['onEdit'], this.props)} />
+      return (
+        <Layout field={this.field} {...R.omit(['onEdit'], this.props)} />
+      )
     }
   }
 
@@ -81,10 +85,47 @@ const createRecord = <
       {...R.omit(['onEdit'], props)} />
   )
 
-  return createEditable<T, D, E, Editable.SugarProps>({
+  let Controller = ({ children, editing, focus, blur, commitEdit }: Editable.ControllerProps) => {
+    let focused = editing === 'focused'
+    let blurred = editing === 'blurred'
+    return (
+      <View style={{ flex: 1 }}>
+        {children}
+        <View style={{ flexDirection: 'column', paddingLeft: 10 }}>
+          <Sprout show={Boolean(editing)}>
+            <Button.Icon
+              color="info"
+              background="background"
+              name="pencil"
+              onPress={focus}
+              disabled={focused} />
+          </Sprout>
+          <Sprout show={focused}>
+            <Button.Icon
+              color="background"
+              background="success"
+              name="check"
+              onPress={commitEdit}
+              disabled={!focused} />
+          </Sprout>
+          <Sprout show={focused}>
+            <Button.Icon
+              color="background"
+              background="danger"
+              name="ban"
+              disabled={!focused}
+              onPress={blur} />
+          </Sprout>
+        </View>
+      </View>
+    )
+  }
+
+  return createEditable<T, D, E, Editable.ControllerProps>({
     display: Record,
     editor: RecordEditor,
-    sugar: p => <View style={{ flex: 1 }} {...p} />
+    controller: Controller,
+    controlledEdit: (value, old) => Object.assign({}, old || {}, value)
   })
 }
 

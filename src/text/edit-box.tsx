@@ -14,10 +14,12 @@ import { IconProps } from 'react-native-vector-icons/Icon';
 import * as themed from '../theme/themed'
 
 type Editing = false | 'blurred' | 'focused'
+
+import { Editable } from '../lib/wrapper-components'
 namespace Box {
-  export type Props = { editing: Editing, multiline: boolean }
+  export type Props = Editable.ControllerProps
+    & { multiline: boolean }
     & ViewProps
-    & { children?: React.ReactChildren }
 }
 type Props = Box.Props
 const Props = lens<Props>()

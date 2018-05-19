@@ -69,30 +69,12 @@ export default class FullExample extends React.Component<{}, { data: typeof data
       <View style={this.styles.wrapper}>
         <ThemeProvider theme={theme}>
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <Button.Icon
+              color={!pressed ? 'background' : 'info'}
+              background={pressed ? 'background' : 'info'}
+              name="pencil"
+              onPress={toggle} />
             <Record value={this.state.data} onEdit={pressed ? this.onEdit : undefined} />
-            <View style={{ flexDirection: 'column', paddingLeft: 10 }}>
-              <Button.Icon
-                color="info"
-                background="background"
-                name="pencil"
-                onPress={toggle}
-                disabled={pressed} />
-              <Sprout show={pressed}>
-                <Button.Icon
-                  color="background"
-                  background="success"
-                  name="check"
-                  disabled={!pressed} />
-              </Sprout>
-              <Sprout show={pressed}>
-                <Button.Icon
-                  color="background"
-                  background="danger" 
-                  name="ban"
-                  disabled={!pressed}
-                  onPress={toggle} />
-              </Sprout>
-            </View>
           </View>
         </ThemeProvider>
         {/*<Rating/>*/}
