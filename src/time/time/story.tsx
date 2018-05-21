@@ -5,13 +5,9 @@ import { LocalTime } from 'js-joda'
 
 import theme from '../../theme/default-theme'
 
-type Props = {
-  showApp?: () => void
-}
-
 const sampleTime = LocalTime.parse('07:00')
 
-export default class TimeStory extends React.Component<Props> {
+export default class TimeStory extends React.Component<{}> {
   styles = {
     wrapper: {
       flex: 1,
@@ -28,13 +24,6 @@ export default class TimeStory extends React.Component<Props> {
       lineHeight: 18,
     },
   };
-
-  showApp(event: Event) {
-    event.preventDefault();
-    if (this.props.showApp) {
-this.props.showApp();
-    } 
-  }
 
   render() {
     return (

@@ -15,7 +15,7 @@ import { Sprout } from '../../styled/animations'
 
 import poems from '../poems'
 
-import createRecord from '../../structures/record'
+import createRecord, { merge } from '../../structures/record'
 
 /*
 interface Props {
@@ -26,11 +26,21 @@ interface Props {
 let data = poems[1]
 type Poem = typeof data
 
-let Record = createRecord<
-  Partial<Poem> & Pick<Poem, 'title' | 'author' | 'content'>
->(({ field, ...props }) => (
+let Author = createRecord<Poem['_author']>({
+  onEdit: merge,
+  render: ({ field, ...props }) => (
+    <View style={{ flex: 1 }}>
+      {field.name(<PlainText primary size="massive" />)}
+      {field.born(<PlainText secondary size="big" />)}
+      {field.died(<PlainText multiline style={{ paddingLeft: 10, paddingBottom: 10 }} muted />)}
+    </View>
+  )
+})
+
+let Record = createRecord<Poem>(({ field, ...props }) => (
   <View style={{ backgroundColor: theme.colors.background.default, padding: 15, borderRadius: 15, flex: 1 }}>
     {field.title(<PlainText primary size="massive" />)}
+    {field._author(<Author />)}
     {field.author(<PlainText secondary size="big" />)}
     {field.content(<PlainText multiline style={{ paddingLeft: 10, paddingBottom: 10 }} muted />)}
   </View>

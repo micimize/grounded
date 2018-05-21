@@ -23,44 +23,70 @@ type State<T> = { changed: Partial<T> }
 
 type Fields<T> = {
   [K in keyof T]: <
-    P extends Editable.Props<T[K]>,
+    Value extends T[K],
+    P extends Editable.Props<Value>,
     E extends React.ReactElement<Partial<P>>
-  >(element: E) => React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>
+    >(element: E) => React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>
 }
+
+type Layout<EProps, _T> = React.ComponentType<EProps & {
+  field: Fields<Full<_T>>,
+  controls?: React.ReactElement<any>
+}>
+
+let defaultControlledEdit = (old = {}, value = {}) => Object.assign({}, old, value)
+let defaultControlledCommit = (old = {}, value) => value
+
+export const merge = defaultControlledEdit
+//R.pipe(R.unapply(R.identity), R.mergeAll)
 
 // createRecord takes a map of fields to Editables, as well as a way to "render" them
 const createRecord = <
-  T extends object,
+  _T extends object, // todo a bit of a mess with all these Partial<>s and Full<>s
+  T extends Partial<_T> = Partial<T>,
   D extends Editable.DisplayProps<T> = Editable.DisplayProps<T>,
   E extends Editable.EditorProps<Partial<T>> & D = Editable.EditorProps<Partial<T>> & D,
-  >(Layout: React.ComponentType<E & { field: Fields<T>, controls?: React.ReactElement<any> }>) => {
+  >(options: {
+    onEdit?: Editable.ControlledEdit<T>
+    render: Layout<E, _T>,
+  } | Layout<E, _T>)  => {
+  let {
+    onEdit: controlledCommit = defaultControlledCommit as Editable.ControlledEdit<T>,
+    render: Layout
+  } = ('render' in options) ? options : { render: options }
+
+
   let valueOf = <K extends keyof T>(value: T | undefined, key: K) =>
     value ? (value as T)[key] : undefined
 
   let getter = (getter: (key: keyof T) => any) =>
     new Proxy({}, {
-      get(obj: {}, key: keyof T ) {
+      get(obj: {}, key: keyof T) {
         return getter(key)
       }
-    }) as Fields<T>
-  
+    }) as Fields<Full<_T>>
+
   class RecordEditor extends React.Component<E, {}> {
 
-    field: Fields<T> = getter(
+    field: Fields<Full<_T>> = getter(
       <K extends keyof T>(field: K) => <
-        P extends Editable.Props<T[K]>,
+        Value extends T[K],
+        P extends Editable.Props<Value>,
         E extends React.ReactElement<Partial<P>>
-      >(element: E) => React.cloneElement(
-        element as any as React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>,
-        this.cursor(field) as Partial<P>
-      )
+        >(element: E) => React.cloneElement(
+          element as any as React.ReactElement<Partial<P> & Pick<P, 'value' | 'onEdit'>>,
+          this.cursor(field) as Partial<P>
+        )
     )
 
     cursor = <K extends keyof T>(key: K) => ({
       value: valueOf(this.props.value, key),
       onEdit: this.props.onEdit ?
-        (value: T[K]) => this.props.onEdit &&
-          this.props.onEdit({ [key]: value } as any as Partial<T>) :
+        (value: T[K]) => {
+          if (this.props.onEdit) {
+            this.props.onEdit({ [key]: value } as any as Partial<T>)
+          }
+        } :
         undefined
     })
 
@@ -106,13 +132,13 @@ const createRecord = <
               color="background"
               background="success"
               name="check"
-              onPress={commitEdit}
+              onPress={() => (commitEdit && commitEdit(), blur && blur())}
               disabled={!focused} />
           </Sprout>
           <Sprout show={focused}>
             <Button.Icon
               color="background"
-              background="danger"
+              background="warning"
               name="ban"
               disabled={!focused}
               onPress={blur} />
@@ -126,7 +152,8 @@ const createRecord = <
     display: Record,
     editor: RecordEditor,
     controller: Controller,
-    controlledEdit: (value, old) => Object.assign({}, old || {}, value)
+    controlledEdit: defaultControlledEdit as Editable.ControlledEdit<T>,
+    controlledCommit
   })
 }
 

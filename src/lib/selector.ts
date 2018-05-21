@@ -21,7 +21,7 @@ type Cases<Keys extends ToKeyable, DK extends Keys = Keys> = (
 
 type C = Cases<'invite' | boolean | undefined, false>
 
-let propOf = <DK extends ToKeyable>({ default: defaultKey, or }: {
+let propOf = <DK extends ToKeyable>(options: {
   default: DK,
   or?: <T extends any = any>(props: T) => any
 }) =>
@@ -31,11 +31,11 @@ let propOf = <DK extends ToKeyable>({ default: defaultKey, or }: {
     R.when(
       R.isNil,
       // closure so this is called lazily
-      () => or ? or<T>(obj) : undefined
+      () => options.or ? options.or<T>(obj) : undefined
     ),
     R.when(
       R.isNil,
-      R.always(obj[defaultKey as ToString<DK>])
+      R.always(obj[options.default as ToString<DK>])
     )
   )
 
@@ -48,10 +48,13 @@ function Selector<
   T,
   Focus extends ToKeyable,
   DK extends Focus,
->(lens: R.ManualLens<Focus, T>, { default: defaultKey, or }: { default: DK, or?: <T>(props: T) => any }) {
+>(
+  lens: R.ManualLens<Focus, T>,
+  options: { default: DK, or?: <T>(props: T) => any }
+) {
   return (cases: Cases<Focus, DK>) => props => R.pipe(
     R.view(lens) as (t: T) => Keyable<Cases<Focus, DK>>,
-    propOf<DK>({ default: defaultKey, or })(cases),
+    propOf<DK>({ default: options.default, or: options.or })(cases),
     R.when(isNestedSelector<typeof props>(), f => f(props))
   ) 
 }

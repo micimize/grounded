@@ -1,4 +1,5 @@
-import React from 'react';
+import React from 'react'
+import * as R from 'ramda'
 
 // todo this should actually be the component type
 type withDefaultProps<P extends object, DP extends Partial<P> = Partial<P>> = 
@@ -37,51 +38,77 @@ const withShadowedProps = <P extends object, DP extends Partial<P> = Partial<P>>
   return (props: RemainingProps) => <Cmp {...props} {...shadowedProps}/>
 }
 
+
+const _UNEDITED = Symbol('UNEDITED')
+
 namespace Editable {
+  export const UNEDITED = _UNEDITED
+  export type UNEDITED = typeof UNEDITED
   export type DisplayProps<T> = {
-    value?: T
+    value?: T,
+    style?: any 
   }
   export type EditorProps<T> = {
     onFocus?: () => any,
     onBlur?: () => any,
-    onEdit?: (value: T) => any,
+    onEdit?: (value: T | undefined) => any,
   }
   export type ControllerProps = {
     editing: false | 'blurred' | 'focused',
     children: React.ReactChild,
   } & Partial<Record<'focus' | 'blur' | 'commitEdit', () => any>>
 
-  export type State<T> = { editorState: 'blurred' | 'focused', value: T | undefined }
+  export type State<T> = { editorState: 'blurred' | 'focused', value: T | UNEDITED }
 
   export type Props<T> = DisplayProps<T> & EditorProps<T>
+
+  export type ControlledEdit<T> = (old?: T, changed?: T) => T
 }
+
+const UNEDITED = Editable.UNEDITED
+
+function isUnedited<T>(v: T | Editable.UNEDITED): v is Editable.UNEDITED {
+  return v === UNEDITED
+} 
+
+function unlessUnedited<T>(v: T | Editable.UNEDITED | undefined): T | undefined {
+  return isUnedited(v) ? undefined : v
+}
+
+
 function createEditable<
   T,
   DisplayProps extends Editable.DisplayProps<T>,
   EditorProps extends Editable.EditorProps<T> & DisplayProps,
-  ControllerProps extends Editable.ControllerProps
+  ControllerProps extends Editable.ControllerProps,
 >(args: {
   display: React.ComponentType<DisplayProps>,
   editor: React.ComponentType<EditorProps>,
   controller: React.ComponentType<ControllerProps>,
-  controlledEdit?: (change: T, old?: T) => T
+  controlledEdit?: Editable.ControlledEdit<T>,
+  controlledCommit?: Editable.ControlledEdit<T>
 }) {
-  const { display: Display, editor: Editor, controller: Controller, controlledEdit } = args
+  const { display: Display, editor: Editor, controller: Controller, controlledEdit, controlledCommit } = args
   return class Editable extends React.Component<EditorProps, Editable.State<T>> {
-    state: Editable.State<T> = { editorState: 'blurred', value: undefined }
+    state: Editable.State<T> = { editorState: 'blurred', value: UNEDITED }
     editorProps = () => {
       let { onEdit, onFocus, onBlur, value } = this.props
+      let cachedValue = this.state.value === UNEDITED ?
+        undefined :
+        this.state.value as T
       let setter = (editorState: 'focused' | 'blurred', cb) => {
         let set = () => (this.setState({ editorState }))
         return cb ? () => (set(), cb()) : set
       }
       return {
-        value: controlledEdit ?
-          (this.state.value === undefined ? value : this.state.value) :
+        value: controlledEdit && this.state.editorState === 'focused' ?
+          controlledEdit(value, cachedValue) :
           value,
         onEdit: controlledEdit ?
           this.state.editorState === 'focused' ?
-            (value: T) => this.setState({ value: controlledEdit(value, this.state.value) }) :
+            (change: T) => this.setState({
+              value: controlledEdit(cachedValue, change)
+            }) :
             undefined :
           onEdit,
         onFocus: setter('focused', onFocus),
@@ -89,12 +116,17 @@ function createEditable<
       }
     }
     render() {
-      let { onEdit, onFocus, onBlur, value, style, ...props } = this.props as any
+      let { onEdit, onFocus, onBlur, value, style } = this.props
+      let props =  R.omit([ 'onEdit', 'onFocus', 'onBlur', 'value', 'style' ], this.props)
       let inputProps = this.editorProps()
       let ifEditing = fn => onEdit ? fn : undefined
       return (
         <Controller
-          commitEdit={controlledEdit ? () => onEdit(this.state.value) : undefined}
+          commitEdit={controlledEdit && onEdit ?
+            controlledCommit ?
+              () => onEdit && onEdit(controlledCommit(value, unlessUnedited<T>(this.state.value))) :
+              () => onEdit && onEdit(unlessUnedited<T>(this.state.value)) :
+            undefined}
           focus={ifEditing(inputProps.onFocus)}
           blur={ifEditing(inputProps.onBlur)}
           editing={onEdit === undefined ? false : this.state.editorState}

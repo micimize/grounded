@@ -1,17 +1,30 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, ViewProps, Text } from 'react-native';
 import { LocalTime } from 'js-joda'
+import styled from 'styled-components/native'
 
-type TimeInterval = {
-  start: LocalTime
-  end: LocalTime
+import Time from '../time/time'
+
+namespace TimeInterval {
+  export type Props = ViewProps & {
+    value?: {
+      start: LocalTime
+      end: LocalTime
+    }
+  }
 }
 
-function TimeInterval({ start, end }: TimeInterval) {
+const Container = styled.View`
+  align-items: center;
+  flex-direction: column;
+`
+
+function TimeInterval({ value: { start = LocalTime.now(), end  = LocalTime.now() } = {}, ...props }: TimeInterval.Props) {
   return (
-    <View>
-      <Text>{start.toString()} - {end.toString()}</Text>
-    </View>
+    <Container {...props}>
+      <Time primary size="huge" value={start} style={{ marginBottom: 0 }} />
+      <Time secondary size="small" value={end} format="  - h:mm"/>
+    </Container>
   )
 }
 

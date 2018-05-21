@@ -4,7 +4,7 @@ import { LocalTime, DateTimeFormatter } from 'js-joda'
 import * as select from '../../theme/style-props'
 import * as themed from '../../theme/themed'
 import { withDefaultProps } from '../../lib/wrapper-components'
-import Text from '../../text/editable'
+import Text from '../../text/plain-text'
 
 type Time = LocalTime
 
@@ -13,22 +13,25 @@ type Time = LocalTime
   Time is a great example, where maybe you want a big primary hour, and a tiny, muted minutes.
   So, it'll look like characters={[['large', 'primary'], { '...': ['tiny', 'muted'] }]}
 */
-type Props = themed.Props<Omit<Text.Props, 'value' | 'onEdit'> & {
-  value: Time,
-  onEdit?: (time: Time) => any,
-  format: string,
-  characters?: Array<string>
-}>
+namespace Time {
+  export type Props = themed.Props<Omit<Text.Props, 'value' | 'onEdit'> & {
+    value: Time,
+    onEdit?: (time: Time) => any,
+    format: string,
+    characters?: Array<string>
+  }>
+}
 
 const wrapEdit = (onEdit: (time: Time) => any) =>
   (text: string) => onEdit(LocalTime.parse(text))
 
-const Time = withDefaultProps<Props>(
+const Time = withDefaultProps<Time.Props>(
   themed.defaultProps({ format: 'h:mm' }),
   ({ value, onEdit, format, ...props }) => (
-    <Text {...props} onEdit={onEdit ? wrapEdit(onEdit) : undefined}
+    <Text {...props} 
       value={value.format(DateTimeFormatter.ofPattern(format))}/>
   )
 )
+// onEdit={onEdit ? wrapEdit(onEdit) : undefined}
 
 export default Time

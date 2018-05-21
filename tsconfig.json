@@ -1,11 +1,16 @@
 {
   "compilerOptions": {
-    "outDir": "build/dist",
+    "outDir": "dist",
+    "baseUrl": "./",
+    "typeRoots": [
+      "./@types",
+      "./node_modules/@types"
+    ],
     "module": "es2015",
     "target": "es6",
+    "allowJs": true,
     "lib": ["es2017", "es7", "dom", "esnext.asynciterable"],
     "sourceMap": true,
-    "allowJs": true,
     "jsx": "react",
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
@@ -18,7 +23,6 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
     "plugins": [
       {
         "name": "typescript-styled-plugin"
@@ -27,10 +31,7 @@
   },
   "exclude": [
     "node_modules",
-    "build",
-    "scripts",
-    "acceptance-tests",
-    "webpack",
+    "dist",
     "jest",
     "src/setupTests.ts"
   ]
