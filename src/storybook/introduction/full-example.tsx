@@ -4,6 +4,7 @@ import * as Button from '../../button'
 import Rating from '../../rating/rating'
 import Time from '../../time/time/time'
 import PlainText from '../../text/editable'
+import PlainTextDisplay from '../../text/plain-text'
 import { View, Text } from 'react-native';
 import theme from '../../theme/default-theme'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -26,13 +27,24 @@ interface Props {
 let data = poems[1]
 type Poem = typeof data
 
-let Author = createRecord<Poem['_author']>({
+let Detail = ({ detail, children }) => (
+  <View style={{ flexDirection: 'row', paddingLeft: 15, marginTop: 5 }}>
+    <PlainTextDisplay muted size="small" value={detail + ': '}/>
+    {children}
+  </View>
+)
+
+let Author = createRecord<Poem['author']>({
   onEdit: merge,
   render: ({ field, ...props }) => (
     <View style={{ flex: 1 }}>
-      {field.name(<PlainText primary size="massive" />)}
-      {field.born(<PlainText secondary size="big" />)}
-      {field.died(<PlainText multiline style={{ paddingLeft: 10, paddingBottom: 10 }} muted />)}
+      {field.name(<PlainText secondary size="large" />)}
+      <Detail detail="born">
+        {field.born(<PlainText muted size="small" />)}
+      </Detail>
+      <Detail detail="died">
+        {field.died(<PlainText muted size="small" />)}
+      </Detail>
     </View>
   )
 })
@@ -40,9 +52,8 @@ let Author = createRecord<Poem['_author']>({
 let Record = createRecord<Poem>(({ field, ...props }) => (
   <View style={{ backgroundColor: theme.colors.background.default, padding: 15, borderRadius: 15, flex: 1 }}>
     {field.title(<PlainText primary size="massive" />)}
-    {field._author(<Author />)}
-    {field.author(<PlainText secondary size="big" />)}
-    {field.content(<PlainText multiline style={{ paddingLeft: 10, paddingBottom: 10 }} muted />)}
+    {field.author(<Author />)}
+    {field.content(<PlainText multiline style={{ paddingLeft: 10, paddingBottom: 10 }} />)}
   </View>
 ))
 

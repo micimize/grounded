@@ -3,8 +3,7 @@ import { stripIndents } from 'common-tags'
 type Poem = {
   title: string,
   published: string,
-  author: string,
-  _author: { name: string, born: string, died: string },
+  author: { name: string, born: string, died: string },
   content: string,
   translator?: string
 }
@@ -14,8 +13,7 @@ const poems: [Poem, Poem] = [
     title: 'Whoever has much to proclaim one day ...',
     published: '1883',
     translator: 'The Nietzsche Channel © 2010',
-    author: 'Friedrich Nietzsche',
-    _author: {
+    author: {
       name: 'Friedrich Nietzsche',
       born: '1844-10-15',
       died: '1900-08-25'
@@ -30,8 +28,7 @@ const poems: [Poem, Poem] = [
   {
     title: 'It sifts from Leaden Sieves',
     published: '1891',
-    author: 'Emily Dickinson',
-    _author: {
+    author: {
       name: 'Emily Dickinson',
       born: '1830-12-10',
       died: '1886-05-15'

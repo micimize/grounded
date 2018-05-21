@@ -87,7 +87,7 @@ const AnimatedContainer = withDefaultProps<Props>(
 )
 
 const Box = styled<Props>(AnimatedContainer as React.ComponentClass<Props>)`
-  margin-bottom: 12px;
+  // margin-bottom: 12px;
   flex-direction: row;
   border-style: dashed;
   ${fadingBorder('bottom')}

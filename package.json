@@ -1,7 +1,7 @@
 {
   "main": "./dist/src",
   "name": "grounded",
-  "version": "0.1.0",
+  "version": "0.0.1-alpha",
   "description": "ground your ui",
   "dependencies": {
     "@storybook/addon-options": "^3.4.3",
