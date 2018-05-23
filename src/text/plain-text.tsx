@@ -7,14 +7,14 @@ import themed from '../theme/themed'
 
 type PlainTextProps = TextProps & { value?: string }
 
-const Text = ({ value = '', ...props }: PlainTextProps) => (
-  <RNText {...props}>{value}</RNText>
+const Text = ({ children, value = '', ...props }: PlainTextProps & { children?: React.ReactNode }) => (
+  <RNText {...props}>{children || value}</RNText>
 )
 
 const PlainText = themed(styled(Text)`
   color: ${select.text.color};
   background: ${select.text.background};
-  font-size: ${select.text.size};
+  font-size: ${select.text.size()};
 `)
 
 namespace PlainText {

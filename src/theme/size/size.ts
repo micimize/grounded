@@ -18,13 +18,16 @@ const shortHands: ShortHands = {
 const BUTTON_RATIO = 0.1
 
 type Modifier = (base: number, ratio: number) => number
+type ValidUnits = 'rem' | 'em' | '%' | 'px'
 
-const sizer = (modifier: Modifier, defaultBase, defaultUnits) =>
-  (size, units = defaultUnits, base = defaultBase) => {
+const sizer = (modifier: Modifier, defaultBase: number, defaultUnits) =>
+  <U extends ValidUnits | undefined>(size, base = defaultBase, units: U = defaultUnits) => {
     // todo shorthands shouldn't be hard coded
     let mod = typeof size === 'string' ? shortHands[size] : size
     let scalar = modifier(base, mod)
-    return units ? `${scalar}${units}` : scalar
+    return (
+      units !== undefined ? `${scalar}${units}` : scalar
+    )as U extends undefined ? number : string
   }
 
 const size: Theme['size'] = {

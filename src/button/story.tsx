@@ -1,17 +1,18 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import Button from './button' 
+import { View } from 'react-native';
+import GroundedButton from './simple' 
+import Button from './raised' 
+import Text from '../text/plain-text';
 
 import theme from '../theme/default-theme'
 
-type Props = {
-  showApp?: () => void
-}
+const SizeButton = ({ size }) => (
+  <Button size={size} content background theme={theme}>
+    <Text size={size}>{size}</Text>
+  </Button>
+)
 
-const SizeButton = ({ size }) =>
-  <Button size={size} content background theme={theme}>{size}</Button>
-
-export default class ButtonStory extends React.Component<Props> {
+export default class ButtonStory extends React.Component<{}> {
   styles = {
     wrapper: {
       flex: 1,
@@ -29,21 +30,15 @@ export default class ButtonStory extends React.Component<Props> {
     },
   };
 
-  showApp(event: Event) {
-    event.preventDefault();
-    if (this.props.showApp) {
-this.props.showApp();
-    } 
-  }
-
   render() {
     return (
       <View style={this.styles.wrapper}>
-        <Text style={this.styles.header}>hacking together some sample stuff</Text>
-        <Button color="background" background="secondary" theme={theme}>Text</Button>
-        <Button primary background theme={theme}/>
-        <Button size="massive" color="background" background="info" theme={theme}>
-          So many options!
+        <Text style={this.styles.header}>grounded bespoke button</Text>
+        <Button background="secondary" theme={theme}>
+          <Text color="background">wow</Text>
+        </Button>
+        <Button size="massive" background="info" theme={theme}>
+          <Text color="background" >So many options!</Text>
         </Button>
         <Text style={{marginTop: 10, marginBottom: 5 }}> Sizes: </Text>
         <SizeButton size="mini"/>

@@ -19,7 +19,9 @@ const Container = styled.View`
   flex-direction: column;
 `
 
-function TimeInterval({ value: { start = LocalTime.now(), end  = LocalTime.now() } = {}, ...props }: TimeInterval.Props) {
+function TimeInterval({
+  value: { start = LocalTime.now(), end  = LocalTime.now() } = {}, ...props
+}: TimeInterval.Props) {
   return (
     <Container {...props}>
       <Time primary size="huge" value={start} style={{ marginBottom: 0 }} />

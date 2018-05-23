@@ -36,10 +36,6 @@ type AwesomeProps = Partial<{
   width: number, // width
 }>
 
-const size = (base = 100) => ({ theme, size = 0 }: Props) => {
-  return theme.size.button.getSize(size, undefined, base) as number
-}
-
 type ButtonProps = Partial<
   Omit<AwesomeProps,
     | 'backgroundColor'
@@ -121,7 +117,7 @@ function withDefaultStyles(props: Props) {
       color,
       borderColor: color,
       backgroundColor: background,
-      fontSize: select.text.size(props),
+      fontSize: select.text.size()(props),
     },
     bottom: {
       backgroundColor: Color(background).darken(0.25).hex()
@@ -137,8 +133,8 @@ function AButton(props: Props) {
     styles,
     style,
     raiseLevel = 4,
-    width = size(100)(props),
-    height = size(50)(props),
+    width = select.text.size(100)(props),
+    height = select.text.size(50)(props),
     ...passThrough
   } = props
   return (

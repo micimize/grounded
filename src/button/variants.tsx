@@ -10,13 +10,15 @@ import { defaultTheme } from '../theme/themed'
 import themed from '../theme/themed'
 import * as select from '../theme/style-props'
 
-import Button from './button'
+import Button from './raised'
 
 const Circle = withDefaultProps(
   {
-    width: 25,
-    height: 25,
-    styles: { button: { borderRadius: 50 } } as Button.Props['styles'],
+    style: {
+      width: 25,
+      height: 25,
+      borderRadius: 50
+    } as Button.Props['style'],
     theme: defaultTheme
   },
   Button

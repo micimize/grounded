@@ -1,5 +1,4 @@
 {
-  "main": "./dist/src",
   "name": "grounded",
   "version": "0.0.1-alpha",
   "description": "ground your ui",
@@ -30,7 +29,7 @@
     "typescript-styled-plugin": "^0.6.3"
   },
   "scripts": {
-    "dist": "tsc --pretty --sourceMap --allowJs false",
+    "dist": "tsc --pretty --sourceMap --allowJs false --rootDir src",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
   },
@@ -55,7 +54,7 @@
     "ts-import-plugin": "^1.4.4",
     "ts-loader": "3.5.0",
     "ts-node": "^3.2.0",
-    "typescript": "2.8"
+    "typescript": "2.8.3"
   },
   "repository": {
     "type": "git",

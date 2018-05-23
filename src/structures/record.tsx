@@ -38,7 +38,7 @@ let defaultControlledEdit = (old = {}, value = {}) => Object.assign({}, old, val
 let defaultControlledCommit = (old = {}, value) => value
 
 export const merge = defaultControlledEdit
-//R.pipe(R.unapply(R.identity), R.mergeAll)
+// R.pipe(R.unapply(R.identity), R.mergeAll)
 
 // createRecord takes a map of fields to Editables, as well as a way to "render" them
 const createRecord = <
@@ -46,7 +46,7 @@ const createRecord = <
   T extends Partial<_T> = Partial<T>,
   D extends Editable.DisplayProps<T> = Editable.DisplayProps<T>,
   E extends Editable.EditorProps<Partial<T>> & D = Editable.EditorProps<Partial<T>> & D,
-  >(options: {
+>(options: {
     onEdit?: Editable.ControlledEdit<T>
     render: Layout<E, _T>,
   } | Layout<E, _T>)  => {
@@ -125,7 +125,7 @@ const createRecord = <
               background="background"
               name="pencil"
               onPress={focus}
-              disabled={focused} />
+              pressed={focused} />
           </Sprout>
           <Sprout show={focused}>
             <Button.Icon

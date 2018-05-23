@@ -11,7 +11,9 @@ type ShortHands = Record<ShortHandProp, ValidSizes>
 type Sizing = {
   default: 0
   ratio: number,
-  getSize: (size: ValidSizes | ShortHandProp, unit?: ValidUnits, base?: number) => number | string
+  getSize: <U extends ValidUnits | undefined>(
+    size: ValidSizes | ShortHandProp, base?: number, unit?: U
+  ) => U extends undefined ? number : string
 } & ShortHands
 
 type Props = { size?: ValidSizes | ShortHandProp }

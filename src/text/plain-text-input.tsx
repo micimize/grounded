@@ -20,7 +20,7 @@ const TextInput = themed(styled(TextEditor)`
   flex: 1;
   color: ${select.text.color};
   background: ${select.text.background};
-  font-size: ${select.text.size};
+  font-size: ${select.text.size()};
   outline: none;
 `)
 

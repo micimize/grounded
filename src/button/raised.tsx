@@ -1,68 +1,111 @@
 import React from 'react';
 import * as R from 'ramda';
-import { Easing, StyleSheet, ViewProps } from 'react-native'
-import * as Animatable from 'react-native-animatable'
+import { Easing, StyleSheet, ViewProps, GestureResponderEvent } from 'react-native'
+import Button from './simple'
+import { Raise } from '../styled/animations'
+
+import styled from 'styled-components/native';
+import { withDefaultProps } from '../lib/wrapper-components'
+import * as themed from '../theme/themed'
+import * as select from '../theme/style-props'
+import color from 'color'
 
 type StyleProp = ViewProps['style']
 
-namespace Raise {
-  export type Props = {
-    level: number
-    color: string | ((color?: string) => string)
-    children: React.ReactElement<ViewProps>
-  } & Omit<Animatable.ViewProps, 'style'>
+let defaultStyle: StyleProp = {
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: 3,
+  paddingTop: 10,
+  paddingBottom: 10,
+  paddingLeft: 15,
+  paddingRight: 15,
+  alignSelf: 'flex-start',
 }
 
-const defaultStyles = {
-  borderBottomWidth: 0,
-  borderBottomRadius: 0,
-  borderBottomColor: 'transparent'
-}
-
-let extract = R.memoizeWith(R.identity, StyleSheet.flatten)
-
-function extractStyles<T>(style: StyleProp) {
-  return R.pick(
+let extract = R.memoizeWith(JSON.stringify, StyleSheet.flatten)
+function extractStyles(style: StyleProp) {
+  return R.omit(
     [
-      'backgroundColor',
-      'borderBottomRadius',
-      'borderBottomLeftRadius',
-      'borderBottomRightRadius',
+      'padding',
+      'paddingTop',
+      'paddingRight',
+      'paddingBottom',
+      'paddingLeft',
     ],
     extract(style)
   )
 }
-
 function raiseStyle(
-  childStyle: StyleProp,
-  color: Raise.Props['color'],
-  borderBottomWidth: number
+  style: StyleProp = {},
+  color: RaisedButtonProps['shadow'],
+  rise: number,
 ) {
-  let { backgroundColor, ...styles } = extractStyles(childStyle)
-  let borderBottomColor = typeof color === 'string' ? color : color(backgroundColor)
+  let { backgroundColor, ...styles } = extractStyles(style)
   return {
     ...styles,
-    borderBottomColor,
-    borderBottomWidth
+    marginTop: rise,
+    backgroundColor: typeof color === 'string' ? color : color(backgroundColor),
   }
 }
 
-function Raise ({
-  level,
-  color, // color or function 
-  easing = Easing.elastic(1.25),
-  duration = 300,
-  children,
-  transition = [ 'borderBottomWidth' ] as any,
-  ...props
-}: Raise.Props) {
-  return (
-    <Animatable.View 
-      style={raiseStyle(children.props.style, color, level)}
-      {...{ easing, duration, transition }} {...props}>
-      {children}
-    </Animatable.View>
-  )
+type RaisedButtonProps = Omit<Button.Props, 'color'> & Omit<Raise.Props, 'maxRise'> & {
+  shadow: string | ((color?: string) => string)
+  pressed: boolean
+}
+type State = { rise: number }
+class RaisedButton extends React.Component<RaisedButtonProps, State> {
+  constructor(props: RaisedButtonProps) {
+    super(props)
+    this.state = { rise: this.props.rise }
+  }
+  onPressIn = (event: GestureResponderEvent) => {
+    this.setState({ rise: 0 })
+    if (this.props.onPressIn) {
+      this.props.onPressIn(event)
+    }
+  }
+  onPressOut = (event: GestureResponderEvent) => {
+    this.setState({ rise: this.props.rise })
+    if (this.props.onPressOut) {
+      this.props.onPressOut(event)
+    }
+  }
+
+  render() {
+    let props = R.omit(['color', 'rise', 'onPressIn', 'onPressOut', 'pressed', 'style'], this.props)
+    let { pressed, shadow, rise } = this.props
+    let style = Object.assign({}, defaultStyle, extract(this.props.style))
+    return (
+      <Raise maxRise={rise} rise={pressed || this.props.disabled ? 0 : this.state.rise}
+          style={raiseStyle(style, shadow, rise)}>
+        <Button {...props} onPressIn={this.onPressIn} onPressOut={this.onPressOut}
+          style={[ defaultStyle, this.props.style ]}/>
+      </Raise>
+    )
+  }
 }
 
-export { Raise }
+namespace Raised {
+  export type Props = themed.Props<RaisedButtonProps>
+}
+
+let Raised = withDefaultProps<Raised.Props>(
+  themed.defaultProps({
+    rise: 4,
+    activeOpacity: 0.8,
+    shadow: bg => bg ? color(bg).darken(0.2).toString() : 'grey',
+  }),
+  styled<RaisedButtonProps>(RaisedButton)`
+    background-color: ${select.text.background};
+    color: ${select.text.color};
+    font-size: ${select.text.size()};
+
+    padding-top: ${select.text.size(5)};
+    padding-bottom: ${select.text.size(5)};
+    padding-left: ${select.text.size(10)};
+    padding-right: ${select.text.size(10)};
+  ` as any
+)
+
+export default Raised

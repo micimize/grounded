@@ -14,10 +14,6 @@ import { IconProps } from 'react-native-vector-icons/Icon'
 
 const logProps = C => props => console.log(props) || <C {...props}/>
 
-const size = (base = 100) => ({ theme, size = 0 }: Props) => {
-  return theme.size.button.getSize(size, undefined, base)
-}
-
 type Props = themed.Props<Implementation.Props>
 
 const Rating = styled(Implementation).attrs<Props>({

@@ -1,11 +1,9 @@
 import React from 'react'
 import * as R from 'ramda'
 
-// todo this should actually be the component type
-type withDefaultProps<P extends object, DP extends Partial<P> = Partial<P>> = 
-  Omit<P, keyof DP> & Partial<DP>
-const withDefaultProps = <P extends object, DP extends Partial<P> = Partial<P>>( defaultProps: DP,
-                                                                                 Cmp: React.ComponentType<P>
+const setDefaultProps = <P extends object, DP extends Partial<P> = Partial<P>>(
+  defaultProps: DP,
+  Cmp: React.ComponentType<P>
 ) => {
   // we are extracting props that need to be required
   type RemainingProps = Omit<P, keyof DP>
@@ -19,6 +17,29 @@ const withDefaultProps = <P extends object, DP extends Partial<P> = Partial<P>>(
   // we override return type definition by turning type checker off
   // for original props  and setting the correct return type
   return Cmp as React.ComponentType<Props>
+}
+
+// todo this should actually be the component type
+type withDefaultProps<P extends object, DP extends Partial<P> = Partial<P>> = 
+  Omit<P, keyof DP> & Partial<DP>
+
+const withDefaultProps = <P extends object, DP extends Partial<P> = Partial<P>>(
+  defaultProps: DP,
+  Cmp: React.ComponentType<P>
+) => {
+  // we are extracting props that need to be required
+  type RemainingProps = Omit<P, keyof DP>
+  // re-create props definition by creating an intersection type
+  type Props = Partial<DP> & RemainingProps
+
+  // shadow the component to avoid overriding other extended defaults 
+  const WithDefaults: React.ComponentType<P> = (props: P) => <Cmp {...props}/>
+  // may not be needed, but we pull the defaultProps from the shadowed component
+  // for later introspection
+  WithDefaults.defaultProps = Object.assign({}, Cmp.defaultProps || {}, defaultProps) 
+
+  // for original props and setting the correct return type
+  return WithDefaults as React.ComponentType<Props>
 }
 
 namespace withShadowedProps {

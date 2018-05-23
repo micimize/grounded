@@ -1,7 +1,9 @@
 import React from 'react';
+import { Easing, StyleSheet, ViewProps } from 'react-native'
+import { Text, View } from 'react-native'
+import * as R from 'ramda';
 import { TouchableOpacityProps } from 'react-native';
 import styled from 'styled-components/native';
-import { Text } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { IconProps } from 'react-native-vector-icons/Icon';
 
@@ -17,7 +19,9 @@ namespace Button {
 
 let Button = themed(styled.TouchableOpacity`
   background-color: ${select.text.background};
+  color: ${select.text.color};
 `)
+
 
 const Circle = withDefaultProps(
   {
@@ -26,3 +30,5 @@ const Circle = withDefaultProps(
   },
   Button
 )
+
+export default Button
