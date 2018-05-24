@@ -1,7 +1,7 @@
 import React from 'react';
-import { View } from 'react-native';
 import { Easing, EasingFunction } from 'react-native'
 import * as Animatable from 'react-native-animatable'
+import styled from 'styled-components/native'
 
 namespace Sprout {
   export type Props = { show?: boolean } & Animatable.ViewProps
@@ -48,6 +48,8 @@ const backfaceStyles = {
   zIndex: -1
 }
 
+let View = styled.View``
+
 function Raise ({
   maxRise,
   rise = 0,
@@ -60,7 +62,8 @@ function Raise ({
 }: Raise.Props) {
   return (
     <View style={style}> 
-      <Animatable.View style={{ position: 'relative', bottom: rise, height: '100%' }}
+      <Animatable.View
+        style={{ position: 'relative', bottom: rise, height: '100%' }}
         {...{ easing, duration, transition }}>
         {children}
         <View style={[style, backfaceStyles]}/>

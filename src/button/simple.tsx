@@ -19,16 +19,7 @@ namespace Button {
 
 let Button = themed(styled.TouchableOpacity`
   background-color: ${select.text.background};
-  color: ${select.text.color};
 `)
 
-
-const Circle = withDefaultProps(
-  {
-    style: { borderRadius: 50, padding: 8 },
-    theme: defaultTheme
-  },
-  Button
-)
 
 export default Button

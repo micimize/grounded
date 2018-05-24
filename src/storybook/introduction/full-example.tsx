@@ -29,7 +29,7 @@ type Poem = typeof data
 
 let Detail = ({ detail, children }) => (
   <View style={{ flexDirection: 'row', paddingLeft: 15, marginTop: 5 }}>
-    <PlainTextDisplay muted size="small" value={detail + ': '}/>
+    <PlainTextDisplay color="muted" size="small" value={detail + ': '}/>
     {children}
   </View>
 )
@@ -38,12 +38,12 @@ let Author = createRecord<Poem['author']>({
   onEdit: merge,
   render: ({ field, ...props }) => (
     <View style={{ flex: 1 }}>
-      {field.name(<PlainText secondary size="large" />)}
+      {field.name(<PlainText color="secondary" size="large" />)}
       <Detail detail="born">
-        {field.born(<PlainText muted size="small" />)}
+        {field.born(<PlainText color="muted" size="small" />)}
       </Detail>
       <Detail detail="died">
-        {field.died(<PlainText muted size="small" />)}
+        {field.died(<PlainText color="muted" size="small" />)}
       </Detail>
     </View>
   )
@@ -51,7 +51,7 @@ let Author = createRecord<Poem['author']>({
 
 let Record = createRecord<Poem>(({ field, ...props }) => (
   <View style={{ backgroundColor: theme.colors.background.default, padding: 15, borderRadius: 15, flex: 1 }}>
-    {field.title(<PlainText primary size="massive" />)}
+    {field.title(<PlainText color="primary" size="massive" />)}
     {field.author(<Author />)}
     {field.content(<PlainText multiline style={{ paddingLeft: 10, paddingBottom: 10 }} />)}
   </View>

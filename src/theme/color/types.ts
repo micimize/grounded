@@ -11,7 +11,7 @@ type ColorProps = Diff<
   'default'
 >
 
-type Props = Partial<Record<ColorProps, true>> & {
+type Props = {
   background?: boolean | ColorProps | 'background'
   color?: ColorProps | 'background'
 }

@@ -8,8 +8,7 @@ import selector, { pick } from '../lib/selector'
 import { withDefaultProps } from '../lib/wrapper-components'
 
 import { Sprout } from '../styled/animations'
-import Icon from 'react-native-vector-icons/FontAwesome'
-import { IconProps } from 'react-native-vector-icons/Icon';
+import Icon from '../typography/icon'
 
 import * as themed from '../theme/themed'
 
@@ -63,12 +62,7 @@ const fadingBorder = (side: 'left' | 'bottom' | 'top' | 'right') => css`
   border-${side}-color: ${borderColors};
 `
 
-const EditIcon = styled<IconProps & { editing?: Editing }>(Icon)`
-  color: ${borderColors};
-  font-size: 15;
-`
-
-const AnimatedContainer = withDefaultProps<Props>(
+const AnimatedContainer = withDefaultProps<Props & { innerRef?: any }>(
   {
     useNativeDriver: true,
     transition: [
@@ -76,18 +70,18 @@ const AnimatedContainer = withDefaultProps<Props>(
       'paddingLeft', 'borderLeftColor', 'borderLeftWidth'
     ] as any
   },
-  ({ editing, multiline, children, ...props }: Props) => (
+  ({ editing, multiline, children, innerRef, ...props }) => (
     <View {...props}>
       {children}
       <Sprout show={Boolean(editing)} style={{ position: 'absolute', right: 0 }}>
-        <EditIcon name="pencil" editing={editing} />
+        <Icon name="pencil" />
       </Sprout>
     </View>
   )
 )
 
 const Box = styled<Props>(AnimatedContainer as React.ComponentClass<Props>)`
-  // margin-bottom: 12px;
+  /* margin-bottom: 12px; */
   flex-direction: row;
   border-style: dashed;
   ${fadingBorder('bottom')}

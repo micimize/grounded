@@ -24,8 +24,8 @@ function TimeInterval({
 }: TimeInterval.Props) {
   return (
     <Container {...props}>
-      <Time primary size="huge" value={start} style={{ marginBottom: 0 }} />
-      <Time secondary size="small" value={end} format="  - h:mm"/>
+      <Time color="primary" size="huge" value={start} style={{ marginBottom: 0 }} />
+      <Time color="secondary" size="small" value={end} format="  - h:mm"/>
     </Container>
   )
 }

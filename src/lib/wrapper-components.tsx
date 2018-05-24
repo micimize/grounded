@@ -143,11 +143,11 @@ function createEditable<
       let ifEditing = fn => onEdit ? fn : undefined
       return (
         <Controller
-          commitEdit={controlledEdit && onEdit ?
-            controlledCommit ?
+          {...controlledEdit && onEdit ? {
+            commitEdit: controlledCommit ?
               () => onEdit && onEdit(controlledCommit(value, unlessUnedited<T>(this.state.value))) :
-              () => onEdit && onEdit(unlessUnedited<T>(this.state.value)) :
-            undefined}
+              () => onEdit && onEdit(unlessUnedited<T>(this.state.value)) 
+          } : {}}
           focus={ifEditing(inputProps.onFocus)}
           blur={ifEditing(inputProps.onBlur)}
           editing={onEdit === undefined ? false : this.state.editorState}

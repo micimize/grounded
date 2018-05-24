@@ -25,11 +25,7 @@ if ('styleSheet' in style) {
 // Inject stylesheet
 document.head.appendChild(style);
 
-type Props = {
-  showApp?: () => void
-}
-
-export default class RatingStory extends React.Component<Props> {
+export default class RatingStory extends React.Component<{}> {
   styles = {
     wrapper: {
       flex: 1,
@@ -46,13 +42,6 @@ export default class RatingStory extends React.Component<Props> {
       lineHeight: 18,
     },
   };
-
-  showApp(event: Event) {
-    event.preventDefault();
-    if (this.props.showApp) {
-this.props.showApp();
-    } 
-  }
 
   render() {
     return (

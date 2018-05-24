@@ -73,7 +73,13 @@ class RaisedButton extends React.Component<RaisedButtonProps, State> {
   }
 
   render() {
-    let props = R.omit(['color', 'rise', 'onPressIn', 'onPressOut', 'pressed', 'style'], this.props)
+    let props = R.omit(
+      [
+        'shadow', 'rise', 'onPressIn', 'onPressOut', 'pressed',
+        'style', 'color', 'background'
+      ],
+      this.props
+    )
     let { pressed, shadow, rise } = this.props
     let style = Object.assign({}, defaultStyle, extract(this.props.style))
     return (
@@ -87,10 +93,11 @@ class RaisedButton extends React.Component<RaisedButtonProps, State> {
 }
 
 namespace Raised {
-  export type Props = themed.Props<RaisedButtonProps>
+  export type _Props = themed.Props<RaisedButtonProps>
+  export type Props = withDefaultProps<RaisedButtonProps>
 }
 
-let Raised = withDefaultProps<Raised.Props>(
+let Raised = withDefaultProps<Raised._Props>(
   themed.defaultProps({
     rise: 4,
     activeOpacity: 0.8,
@@ -98,8 +105,6 @@ let Raised = withDefaultProps<Raised.Props>(
   }),
   styled<RaisedButtonProps>(RaisedButton)`
     background-color: ${select.text.background};
-    color: ${select.text.color};
-    font-size: ${select.text.size()};
 
     padding-top: ${select.text.size(5)};
     padding-bottom: ${select.text.size(5)};
