@@ -20,11 +20,11 @@ const formatCharacters: Record<string, FormattingRules> = {
     },
     validateContextually(char, index, value) {
       let H = value[index - 1]
-      return !(H != '1' && ('a' <= char || char == '0'))
+      return !(H !== '1' && ('a' <= char || char === '0'))
     },
     transformContextually(char: string, index: number, value: string) {
       let H = value[index - 1]
-      if (H == '1' && ('a' > char && char > '2')) {
+      if (H === '1' && ('a' > char && char > '2')) {
         return '2'
       }
       return undefined
@@ -61,40 +61,40 @@ const formatCharacters: Record<string, FormattingRules> = {
   },
 }
 
-function configure({ formatCharacters: additionalFormatCharacters, ...config }) {
+namespace MaskedInput {
+  export type Props = Partial<InputHTMLAttributes<any>> & {
+    value?: string,
+    defaultValue?: string,
+
+    mask?: string,
+    formatCharacters?: object
+
+    config?: object
+
+    isRevealingMask?: boolean
+    backspaceSkipsStatic?: boolean
+    ref?: (ref: MaskedInput) => any
+
+    onFull?: (value: string) => any
+    onEmpty?: () => any
+  } & ({
+    mask: string,
+  } | {
+      config: { mask: string } & object
+    })
+}
+
+
+function configure({ formatCharacters: additionalFormatCharacters = {}, ...config }) {
   return Object.assign({
     isRevealingMask: false,
     backspaceSkipsStatic: true,
     placeholder: "",
-    formatCharacters: Object.assign(formatCharacters, additionalFormatCharacters)
+    formatCharacters: { ...formatCharacters, ...additionalFormatCharacters }
   }, config)
 }
 
-type Props = InputHTMLAttributes<any> & {
-  value?: string, 
-  defaultValue?: string, 
-
-  formatCharacters: object
-  placeholderChar: string
-
-  isRevealingMask: boolean
-  backspaceSkipsStatic: boolean
-  ref: (ref: React.ReactElement<any>) => any
-
-  as: React.ComponentType<any>
-
-  config: any
-
-  onFull: (value: string) => any
-  onEmpty: () => any
-} & ({
-  mask: string,
-} | {
-  config: { mask: string } & object
-})
-
-
-export default class MaskedInput extends React.Component<Props, { value: string }> {
+class MaskedInput extends React.Component<MaskedInput.Props, { value: string }> {
   input: React.ReactElement<'input'>
 
   constructor(props) {
@@ -102,9 +102,10 @@ export default class MaskedInput extends React.Component<Props, { value: string 
     this.state = { value: props.defaultValue || "" }
   }
 
-  getConfig = () => configure(this.props.config)
+  getConfig = () => configure(this.props.config || this.props)
 
   maskIsFull = (value) => {
+    let mask = this.props.mask || this.getConfig().mask
     if (this.getConfig().mask.length == value.length) {
       let { selectionEnd, selectionStart } = this.input as any
       return selectionStart == selectionEnd == value.length
@@ -145,7 +146,7 @@ export default class MaskedInput extends React.Component<Props, { value: string 
     }
   }
 
-  componentWillReceiveProps ({ value, onFull }: Props) {
+  componentWillReceiveProps ({ value, onFull }: MaskedInput.Props) {
     // controlled components can still have onFull callbacks
     if (onFull && value !== undefined && this.maskIsFull(value)) {
       onFull(value.toString())
@@ -171,15 +172,15 @@ export default class MaskedInput extends React.Component<Props, { value: string 
       ...props
     } = this.props
     return (
-      <div className={`masked-input ${className}`}>
-        <Input
-          isRevealingMask={true}
-          value={value}
-          ref={this.handleRef}
-          onChange={this.onChange}
-          {...this.getConfig()}
-          {...props} />
-      </div>
+      <Input
+        isRevealingMask={true}
+        value={value}
+        ref={this.handleRef}
+        onChange={this.onChange}
+        {...this.getConfig()}
+        {...props} />
     )
   }
 }
+
+export default MaskedInput

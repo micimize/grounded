@@ -3,11 +3,18 @@ import { View, Text } from 'react-native';
 import Time from './time' 
 import { LocalTime } from 'js-joda'
 
+import TimeInput from './time-input.web'
+
 import theme from '../../theme/default-theme'
 
 const sampleTime = LocalTime.parse('07:00')
 
-export default class TimeStory extends React.Component<{}> {
+export default class TimeStory extends React.Component<{}, any> {
+  state = {
+    sampleTime
+  }
+
+
   styles = {
     wrapper: {
       flex: 1,
@@ -28,6 +35,9 @@ export default class TimeStory extends React.Component<{}> {
   render() {
     return (
       <View style={this.styles.wrapper}>
+        <TimeInput value={this.state.sampleTime}
+          onEdit={sampleTime => this.setState({ sampleTime })} />
+        <TimeInput onEdit={console.log}/>
         <Text style={this.styles.header}>hacking together some sample stuff</Text>
         <Time color="secondary" value={sampleTime} theme={theme} />
         <Time size="massive" color="primary" background value={sampleTime} theme={theme} />
