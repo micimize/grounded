@@ -40,7 +40,7 @@ export default withDefaultProps<Props>(
     precision: 0.5,
     count: 5,
     ratingWidth: 30,
-    accent: true,
+    color: "accent",
     background: 'muted',
   },
   Rating

@@ -7,7 +7,7 @@ import Text from '../text/plain-text';
 import theme from '../theme/default-theme'
 
 const SizeButton = ({ size }) => (
-  <Button size={size} content background theme={theme}>
+  <Button size={size} color="content" background theme={theme}>
     <Text size={size}>{size}</Text>
   </Button>
 )
@@ -35,7 +35,7 @@ export default class ButtonStory extends React.Component<{}> {
       <View style={this.styles.wrapper}>
         <Text style={this.styles.header}>grounded bespoke button</Text>
         <Button background="secondary" theme={theme}>
-          <Text color="background">wow</Text>
+          <Text size="large" color="background">wow</Text>
         </Button>
         <Button size="massive" background="info" theme={theme}>
           <Text color="background" >So many options!</Text>

@@ -50,7 +50,7 @@ export default class RatingStory extends React.Component<{}> {
         <Rating theme={theme} />
         <Rating
           theme={theme}
-          primary
+          color="primary"
           background="muted"
           onEdit={console.log}
           precision={0.5} count={5} ratingWidth={60} ratingComponent={

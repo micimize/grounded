@@ -1,5 +1,6 @@
 import React from 'react'
 import * as R from 'ramda'
+import styled from 'styled-components/native'
 
 const setDefaultProps = <P extends object, DP extends Partial<P> = Partial<P>>(
   defaultProps: DP,
@@ -110,7 +111,7 @@ function createEditable<
   controlledCommit?: Editable.ControlledEdit<T>
 }) {
   const { display: Display, editor: Editor, controller: Controller, controlledEdit, controlledCommit } = args
-  return class Editable extends React.Component<EditorProps, Editable.State<T>> {
+  class Editable extends React.Component<EditorProps, Editable.State<T>> {
     state: Editable.State<T> = { editorState: 'blurred', value: UNEDITED }
     editorProps = () => {
       let { onEdit, onFocus, onBlur, value } = this.props
@@ -159,7 +160,9 @@ function createEditable<
       )
     }
   }
+  return styled(Editable)``
 }
+
 type Editable<
   T,
   DisplayProps extends Editable.DisplayProps<T>

@@ -29,8 +29,8 @@ export default class TimeStory extends React.Component<{}> {
     return (
       <View style={this.styles.wrapper}>
         <Text style={this.styles.header}>hacking together some sample stuff</Text>
-        <Time secondary value={sampleTime} theme={theme} />
-        <Time size="massive" primary background value={sampleTime} theme={theme} />
+        <Time color="secondary" value={sampleTime} theme={theme} />
+        <Time size="massive" color="primary" background value={sampleTime} theme={theme} />
       </View>
     );
   }

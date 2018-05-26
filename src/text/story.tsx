@@ -65,11 +65,11 @@ export default class RatingStory extends React.Component<Props> {
     return (
       <View style={this.styles.wrapper}>
         <Text style={this.styles.header}>hacking together some sample stuff</Text>
-        <Text secondary theme={theme}>
+        <Text color="secondary" theme={theme}>
           Cool text bro
         </Text>
-        <Text size="massive" primary background theme={theme}>So big</Text>
-        <Input size="massive" primary background theme={theme} placeholder="big editable" />
+        <Text size="massive" color="primary" background theme={theme}>So big</Text>
+        <Input size="massive" color="primary" background theme={theme} placeholder="big editable" />
       </View>
     );
   }

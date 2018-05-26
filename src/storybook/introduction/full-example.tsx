@@ -7,8 +7,6 @@ import PlainText from '../../text/editable'
 import PlainTextDisplay from '../../text/plain-text'
 import { View, Text } from 'react-native';
 import theme from '../../theme/default-theme'
-import Icon from 'react-native-vector-icons/FontAwesome'
-import * as Animatable from 'react-native-animatable'
 
 import { ThemeProvider } from 'styled-components/native'
 

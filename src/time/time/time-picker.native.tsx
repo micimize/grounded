@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native'
 import Time from './time'
-import DateTimePicker from 'react-native-modal-datetime-picker';
+import DateTimePicker, { DateTimePickerProps } from 'react-native-modal-datetime-picker';
 
 export default class DateTimePickerTester extends React.Component<any> {
   state = {

@@ -26,7 +26,7 @@ const EditablePlainText = createEditable({
   controller: Box,
 })
 
-const Editable = themed.default<PlainTextInput.Props>(EditablePlainText as any)
+const Editable = themed.default(EditablePlainText)
 
 namespace Editable {
   export type Props = themed.Props<PlainTextInput.Props>
