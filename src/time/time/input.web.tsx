@@ -1,10 +1,11 @@
 import React from 'react'
 import * as R from 'ramda'
 import Input from './masked-input'
-
 import { LocalTime, nativeJs, DateTimeFormatter } from 'js-joda'
 
+
 import Moment from 'moment'
+
 function parse(str: string) {
   if (!str) {
     return undefined;
@@ -15,7 +16,21 @@ function parse(str: string) {
   }
   return undefined;
 }
-const hours = 'Ho' 
+
+namespace TimeInput {
+  export type Props = themed<
+    Omit<Input.Props, 'mask' | 'config' | 'onChange' | 'value' | 'defaultValue' | 'size'> & {
+      onEdit: (time?: LocalTime) => any
+      value?: LocalTime,
+      defaultValue?: LocalTime,
+    }
+  >
+  export type Component = React.ComponentType<Props>
+}
+type Props = TimeInput.Props
+
+
+const hours: string = '24' // Ho 
 
 const dayStartHour = 9
 
@@ -26,21 +41,15 @@ function dynamicallyAdapt12HourValue(value){
   return [H, h, c, M, m, meridian, tail].join('')
 }
 
-type Props = Omit<Input.Props, 'mask' | 'config' | 'onChange' | 'value' | 'defaultValue'> & {
-  onEdit: (time?: LocalTime) => any
-  value?: LocalTime,
-  defaultValue?: LocalTime,
-}
-
 type Config = {
   placeholder: '12:59pm' | '23:59',
   mask: string,
 }
-class TimeInput extends React.Component<Props, { config: Config }> {
+class MaskedTimeInput extends React.Component<Props, { config: Config }> {
   constructor(props) {
     super(props);
     this.state = {
-      config: (hours == 'Ho') ? {
+      config: (hours === 'Ho') ? {
         mask: `${hours}:Miam`,
         placeholder: '12:59pm'
       } : {
@@ -71,9 +80,19 @@ class TimeInput extends React.Component<Props, { config: Config }> {
         defaultValue={defaultValue}
         config={this.state.config} 
         onChange={this.onChange}
-        {...R.omit(['onEdit', 'value', 'defaultValue'], this.props)} />
+        {...R.omit(['onEdit', 'value', 'defaultValue', 'size'], this.props)} />
     )
   }
 }
+
+import styled from 'styled-components/native'
+import themed from '../../theme/themed'
+import * as select from '../../theme/style-props'
+
+const TimeInput = themed<TimeInput.Props>(styled(MaskedTimeInput)`
+  color: ${select.text.color};
+  background: ${select.text.background};
+  font-size: ${select.text.size()};
+` as any)
 
 export default TimeInput

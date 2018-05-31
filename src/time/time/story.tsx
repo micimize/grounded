@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import Time from './time' 
+import Time from './editable' 
 import { LocalTime } from 'js-joda'
 
 import TimeInput from './time-input.web'
@@ -41,6 +41,8 @@ export default class TimeStory extends React.Component<{}, any> {
         <Text style={this.styles.header}>hacking together some sample stuff</Text>
         <Time color="secondary" value={sampleTime} theme={theme} />
         <Time size="massive" color="primary" background value={sampleTime} theme={theme} />
+        <Time size="massive" color="primary" background value={sampleTime} theme={theme}
+          onEdit={sampleTime => this.setState({ sampleTime })} />
       </View>
     );
   }

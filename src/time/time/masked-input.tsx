@@ -1,6 +1,14 @@
 import React, { InputHTMLAttributes } from 'react'
 import Input from 'react-maskedinput'
 
+import {  StyleSheet } from 'react-native'
+
+let font = {
+  fontFamily: 'monospace',
+  border: 'none',
+  outline: 0
+}
+
 type FormattingRules = {
   defaultChar?: string | ((char: string) => void | string),
   validate: (char: string) => boolean
@@ -169,10 +177,12 @@ class MaskedInput extends React.Component<MaskedInput.Props, { value: string }> 
       defaultValue,
       className = '',
       value = this.state.value,
+      style,
       ...props
     } = this.props
     return (
       <Input
+        style={StyleSheet.flatten([ font, style ] as any)}
         isRevealingMask={true}
         value={value}
         ref={this.handleRef}

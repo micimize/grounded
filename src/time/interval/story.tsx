@@ -34,7 +34,7 @@ export default class TimeIntervalStory extends React.Component<{}> {
       <ThemeProvider theme={theme}>
         <View style={this.styles.wrapper}>
           <Text style={this.styles.header}>hacking together some sample stuff</Text>
-          <TimeInterval value={sampleInterval} />
+          <TimeInterval value={sampleInterval} onEdit={console.log} />
         </View>
       </ThemeProvider>
     );

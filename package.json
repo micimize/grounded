@@ -6,6 +6,7 @@
     "@storybook/addon-options": "^3.4.3",
     "@types/color": "^3.0.0",
     "@types/react-native-vector-icons": "^4.6.1",
+    "react-maskedinput": "git+https://github.com/micimize/react-maskedinput.git",
     "antd-mobile": "^2.1.8",
     "babel-polyfill": "^6.26.0",
     "color": "^3.0.0",
